@@ -1,0 +1,32 @@
+# C++ objects and libs
+
+*.slo
+*.lo
+*.o
+*.a
+*.la
+*.lai
+*.so
+*.dll
+*.dylib
+
+*.bak
+*.pdb
+
+# directories
+bin/
+test/**/release
+test/**/debug
+/build/
+# Qt-es
+
+*.pro.user
+*.pro.user.*
+moc_*.cpp
+qrc_*.cpp
+Makefile
+*-build-*
+*.Debug
+*.Release
+build/*_resource.rc
+metaInfo.json

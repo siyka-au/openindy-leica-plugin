@@ -1,0 +1,17 @@
+{
+    "isOiPlugin": true,
+
+    "name"  : "OpenIndy Leica Plugin",
+    "pluginVersion" : "1.0.0",
+    "author"  : "OpenIndyOrg",
+
+    "compiler" : "@COMPILER@",
+    "operatingSystem" : "@OS@",
+
+    "description" : "Leica GeoCom total station driver",
+
+    "dependencies" : false,
+    "libPaths" : [
+        { "name": "dependencies", "path": "app" }
+    ]
+}
