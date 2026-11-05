@@ -1,7 +1,8 @@
+#include <QList>
+#include <QPointer>
 #include <QString>
 #include <QtTest>
-#include <QPointer>
-#include <QList>
+
 #include "plugin.h"
 #include "sensortype.h"
 
@@ -16,47 +17,47 @@ using namespace oi;
  * Q_PLUGIN_METADATA, metaInfo.json mismatch) would pass every other test
  * in this repo and still fail to load in the real app.
  */
-class LoadPluginTest : public QObject
-{
-    Q_OBJECT
+class LoadPluginTest : public QObject {
+  Q_OBJECT
 
-private Q_SLOTS:
-    void testLoadPlugin();
-
+ private Q_SLOTS:
+  void testLoadPlugin();
 };
 
-void LoadPluginTest::testLoadPlugin(){
+void LoadPluginTest::testLoadPlugin() {
+  QString pluginPath = PLUGIN_PATH;
 
-    QString pluginPath = PLUGIN_PATH;
+  QVERIFY2(QFile::exists(pluginPath), pluginPath.toLatin1().data());
+  QPluginLoader pluginLoader(pluginPath);
 
-    QVERIFY2(QFile::exists(pluginPath), pluginPath.toLatin1().data());
-    QPluginLoader pluginLoader(pluginPath);
+  QObject* plugin = pluginLoader.instance();
+  QVERIFY2(plugin, pluginLoader.errorString().toLatin1().data());
 
-    QObject *plugin = pluginLoader.instance();
-    QVERIFY2(plugin, pluginLoader.errorString().toLatin1().data());
+  Plugin* oiPlugin = qobject_cast<Plugin*>(plugin);
+  QVERIFY2(oiPlugin, "qobject_cast");
 
-    Plugin *oiPlugin = qobject_cast<Plugin *>(plugin);
-    QVERIFY2(oiPlugin, "qobject_cast");
+  // this plugin is Leica-only: no functions, no bundle adjustments, no
+  // simulations, no tools, no exchanges - just the sensor it exists for
+  QVERIFY2(oiPlugin->createFunctions().isEmpty(),
+           "expected no functions from a sensor-only plugin");
 
-    //this plugin is Leica-only: no functions, no bundle adjustments, no
-    //simulations, no tools, no exchanges - just the sensor it exists for
-    QVERIFY2(oiPlugin->createFunctions().isEmpty(), "expected no functions from a sensor-only plugin");
+  QList<QPointer<Sensor> > sensors = oiPlugin->createSensors();
+  QCOMPARE(sensors.size(), 1);
 
-    QList<QPointer<Sensor> > sensors = oiPlugin->createSensors();
-    QCOMPARE(sensors.size(), 1);
+  QPointer<Sensor> sensor = oiPlugin->createSensor("LeicaTachymeter");
+  QVERIFY2(!sensor.isNull(), "createSensor(\"LeicaTachymeter\") returned null");
 
-    QPointer<Sensor> sensor = oiPlugin->createSensor("LeicaTachymeter");
-    QVERIFY2(!sensor.isNull(), "createSensor(\"LeicaTachymeter\") returned null");
+  sensor->init();
 
-    sensor->init();
+  // same derivation PluginRepository itself applies at scan time (Stage 1's
+  // open SensorType, resolved from plugin metadata rather than a core enum)
+  const SensorType type =
+      SensorType::fromInterfaceId(sensor->getMetaData().iid);
+  QVERIFY2(type.isValid(),
+           "LeicaTachymeter's IID must resolve to a valid SensorType");
 
-    //same derivation PluginRepository itself applies at scan time (Stage 1's
-    //open SensorType, resolved from plugin metadata rather than a core enum)
-    const SensorType type = SensorType::fromInterfaceId(sensor->getMetaData().iid);
-    QVERIFY2(type.isValid(), "LeicaTachymeter's IID must resolve to a valid SensorType");
-
-    QVERIFY2(!sensor->getSupportedMeasurementConfigs().isEmpty(), "LeicaTachymeter must publish its own measurement configs");
-
+  QVERIFY2(!sensor->getSupportedMeasurementConfigs().isEmpty(),
+           "LeicaTachymeter must publish its own measurement configs");
 }
 
 QTEST_APPLESS_MAIN(LoadPluginTest)

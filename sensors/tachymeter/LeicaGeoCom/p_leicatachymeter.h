@@ -1,14 +1,14 @@
 #ifndef P_LEICATACHYMETER_H
 #define P_LEICATACHYMETER_H
 
-#include <QtGlobal>
 #include <QDateTime>
-#include <QObject>
 #include <QDebug>
-#include <QtSerialPort/QSerialPort>
-#include <QThread>
+#include <QObject>
 #include <QStringList>
+#include <QThread>
 #include <QVariantMap>
+#include <QtGlobal>
+#include <QtSerialPort/QSerialPort>
 
 #include "totalstation.h"
 
@@ -17,107 +17,102 @@ using namespace oi;
 /*!
  * \brief The LeicaTachymeter class
  */
-class LeicaTachymeter : public TotalStation
-{
-    Q_OBJECT
+class LeicaTachymeter : public TotalStation {
+  Q_OBJECT
 
-public:
+ public:
+  // ############################
+  // sensor initialization method
+  // ############################
 
-    //############################
-    //sensor initialization method
-    //############################
+  void init();
 
-    void init();
+  // ########################
+  // sensor state and actions
+  // ########################
 
-    //########################
-    //sensor state and actions
-    //########################
+  bool doSelfDefinedAction(const QString& action);
 
-    bool doSelfDefinedAction(const QString &action);
+  bool abortAction();
 
-    bool abortAction();
+  bool connectSensor();
+  bool disconnectSensor();
 
-    bool connectSensor();
-    bool disconnectSensor();
+  QList<QPointer<Reading> > measure(const MeasurementConfig& mConfig);
+  QVariantMap readingStream(const ReadingTypes& streamFormat);
 
-    QList<QPointer<Reading> > measure(const MeasurementConfig &mConfig);
-    QVariantMap readingStream(const ReadingTypes &streamFormat);
+  bool getConnectionState();
+  bool getIsReadyForMeasurement();
+  QMap<QString, QString> getSensorStatus();
+  bool getIsBusy();
 
-    bool getConnectionState();
-    bool getIsReadyForMeasurement();
-    QMap<QString, QString> getSensorStatus();
-    bool getIsBusy();
+ protected:
+  // ############################
+  // special totalstation methods
+  // ############################
 
-protected:
+  bool move(const double& azimuth, const double& zenith, const double& distance,
+            const bool& isRelative);
+  bool move(const double& x, const double& y, const double& z);
 
-    //############################
-    //special totalstation methods
-    //############################
+  bool toggleSightOrientation();
 
-    bool move(const double &azimuth, const double &zenith, const double &distance, const bool &isRelative);
-    bool move(const double &x, const double &y, const double &z);
+  // #########################
+  // Leica tachymeter specific
+  // #########################
 
-    bool toggleSightOrientation();
+  // bool getLOCKState();
+  // void deactiveLockState();
+  // bool setLOCKState(QString currentState);
+  // bool startTargetTracking();
+  // bool fineAdjust();
 
-    //#########################
-    //Leica tachymeter specific
-    //#########################
+ private:
+  QPointer<QSerialPort> serial;
 
-    //bool getLOCKState();
-    //void deactiveLockState();
-    //bool setLOCKState(QString currentState);
-    //bool startTargetTracking();
-    //bool fineAdjust();
+  QList<QPointer<Reading> > measurePolar(const MeasurementConfig& mConfig);
+  QList<QPointer<Reading> > measureDistance(const MeasurementConfig& mConfig);
+  QList<QPointer<Reading> > measureDirection(const MeasurementConfig& mConfig);
+  QList<QPointer<Reading> > measureCartesian(const MeasurementConfig& mConfig);
 
-private:
+  QSerialPort::BaudRate myBaudRate;
+  QSerialPort::DataBits myDataBits;
+  QSerialPort::Parity myParity;
+  QSerialPort::StopBits myStopBits;
+  QSerialPort::FlowControl myFlowControl;
 
-    QPointer<QSerialPort> serial;
+  QString receive();
+  // void getError(QSerialPort::SerialPortError);
+  bool executeEDM();
+  bool executeCommand(QString);
 
-    QList<QPointer<Reading> > measurePolar(const MeasurementConfig &mConfig);
-    QList<QPointer<Reading> > measureDistance(const MeasurementConfig &mConfig);
-    QList<QPointer<Reading> > measureDirection(const MeasurementConfig &mConfig);
-    QList<QPointer<Reading> > measureCartesian(const MeasurementConfig &mConfig);
+  bool checkCommandRC(QString command);
 
-    QSerialPort::BaudRate myBaudRate;
-    QSerialPort::DataBits myDataBits;
-    QSerialPort::Parity myParity;
-    QSerialPort::StopBits myStopBits;
-    QSerialPort::FlowControl myFlowControl;
+  SensorFaces getCurrentFace(double zenith);
 
-    QString receive();
-    //void getError(QSerialPort::SerialPortError);
-    bool executeEDM();
-    bool executeCommand(QString);
+  bool setTargetTypeMeasure();
+  bool setTargetTypeStream();
+  // bool setAdjustMode();
 
-    bool checkCommandRC(QString command);
+  // void stopTrackingAfterMeasure();
 
-    SensorFaces getCurrentFace(double zenith);
+  // bool laserOn;
+  // bool fineAdjusted;
 
-    bool setTargetTypeMeasure();
-    bool setTargetTypeStream();
-    //bool setAdjustMode();
+  // bool measureWatchWindow;
+  // bool watchWindowOpen;
+  // ReadingTypes currentStreamFormat;
+  // void stopWatchWindowForMeasurement();
+  // void restartWatchWindowAfterMeasurement();
 
-    //void stopTrackingAfterMeasure();
+  // QPointer<Reading> getQuickMeasReading(QString receive);
 
-    //bool laserOn;
-    //bool fineAdjusted;
+  // void activateLaserPointer();
+  // void deactivateLaserPointer();
 
-    //bool measureWatchWindow;
-    //bool watchWindowOpen;
-    //ReadingTypes currentStreamFormat;
-    //void stopWatchWindowForMeasurement();
-    //void restartWatchWindowAfterMeasurement();
+  // void stopTrackingMode();
 
-
-    //QPointer<Reading> getQuickMeasReading(QString receive);
-
-    //void activateLaserPointer();
-    //void deactivateLaserPointer();
-
-    //void stopTrackingMode();
-
-    QPointer<Reading> getStreamValues();
-
+  QPointer<Reading> getStreamValues();
 };
 
-#endif // P_LEICATACHYMETER_H
+#endif  // P_LEICATACHYMETER_H
