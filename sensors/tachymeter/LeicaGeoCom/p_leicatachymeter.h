@@ -25,26 +25,26 @@ class LeicaTachymeter : public TotalStation {
   // sensor initialization method
   // ############################
 
-  void init();
+  void init() override;
 
   // ########################
   // sensor state and actions
   // ########################
 
-  bool doSelfDefinedAction(const QString& action);
+  bool doSelfDefinedAction(const QString& action) override;
 
-  bool abortAction();
+  bool abortAction() override;
 
-  bool connectSensor();
-  bool disconnectSensor();
+  bool connectSensor() override;
+  bool disconnectSensor() override;
 
-  QList<QPointer<Reading> > measure(const MeasurementConfig& mConfig);
-  QVariantMap readingStream(const ReadingTypes& streamFormat);
+  QList<QPointer<Reading> > measure(const MeasurementConfig& mConfig) override;
+  QVariantMap readingStream(const ReadingTypes& streamFormat) override;
 
-  bool getConnectionState();
-  bool getIsReadyForMeasurement();
-  QMap<QString, QString> getSensorStatus();
-  bool getIsBusy();
+  bool getConnectionState() override;
+  bool getIsReadyForMeasurement() override;
+  QMap<QString, QString> getSensorStatus() override;
+  bool getIsBusy() override;
 
  protected:
   // ############################
@@ -52,10 +52,10 @@ class LeicaTachymeter : public TotalStation {
   // ############################
 
   bool move(const double& azimuth, const double& zenith, const double& distance,
-            const bool& isRelative);
-  bool move(const double& x, const double& y, const double& z);
+            const bool& isRelative) override;
+  bool move(const double& x, const double& y, const double& z) override;
 
-  bool toggleSightOrientation();
+  bool toggleSightOrientation() override;
 
   // #########################
   // Leica tachymeter specific

@@ -597,7 +597,7 @@ QVariantMap LeicaTachymeter::readingStream(const ReadingTypes& streamFormat) {
 
   QVariantMap m;
 
-  QPointer<Reading> reading(NULL);
+  QPointer<Reading> reading(nullptr);
 
   // set target to specified value
   // Stream works with trk mode, for fast measurements
@@ -1241,7 +1241,7 @@ this->sensorConfiguration.getStringParameter().value("sense of rotation");
  * \return
  */
 QPointer<Reading> LeicaTachymeter::getStreamValues() {
-  QPointer<Reading> reading(NULL);
+  QPointer<Reading> reading(nullptr);
 
   if (this->sensorConfiguration.getStringParameter().contains("reflector")) {
     QString value =

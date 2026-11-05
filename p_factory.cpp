@@ -40,33 +40,33 @@ QPointer<Sensor> LeicaPlugin::createSensor(const QString& name) {
   if (name.compare("LeicaTachymeter") == 0) {
     return new LeicaTachymeter();
   }
-  return QPointer<Sensor>(NULL);
+  return QPointer<Sensor>(nullptr);
 }
 
 QPointer<Function> LeicaPlugin::createFunction(const QString& /*name*/) {
-  return QPointer<Function>(NULL);
+  return QPointer<Function>(nullptr);
 }
 
 QPointer<BundleAdjustment> LeicaPlugin::createBundleAdjustment(
     const QString& /*name*/) {
-  return QPointer<BundleAdjustment>(NULL);
+  return QPointer<BundleAdjustment>(nullptr);
 }
 
 QPointer<SimulationModel> LeicaPlugin::createSimulation(
     const QString& /*name*/) {
-  return QPointer<SimulationModel>(NULL);
+  return QPointer<SimulationModel>(nullptr);
 }
 
 QPointer<Tool> LeicaPlugin::createTool(const QString& /*name*/) {
-  return QPointer<Tool>(NULL);
+  return QPointer<Tool>(nullptr);
 }
 
 QPointer<ExchangeSimpleAscii> LeicaPlugin::createSimpleAsciiExchange(
     const QString& /*name*/) {
-  return QPointer<ExchangeSimpleAscii>(NULL);
+  return QPointer<ExchangeSimpleAscii>(nullptr);
 }
 
 QPointer<ExchangeDefinedFormat> LeicaPlugin::createDefinedFormatExchange(
     const QString& /*name*/) {
-  return QPointer<ExchangeDefinedFormat>(NULL);
+  return QPointer<ExchangeDefinedFormat>(nullptr);
 }
