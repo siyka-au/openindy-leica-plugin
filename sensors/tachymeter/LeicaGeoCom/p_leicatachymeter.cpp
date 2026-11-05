@@ -697,7 +697,7 @@ QList<QPointer<Reading> > LeicaTachymeter::measurePolar(
   if (this->serial->isOpen()) {
     for (int k = 0; k < faceCount; k++) {
       if (this->executeEDM()) {
-        Reading* r;
+        Reading* r = nullptr;
         QString command = "%R1Q,2108:5000,1\r\n";
 
         if (executeCommand(command)) {
