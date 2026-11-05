@@ -12,18 +12,18 @@ void LeicaTachymeter::init() {
   this->metaData.iid = TotalStation_iidd;
 
   // set supported reading types
-  this->supportedReadingTypes.append(ePolarReading);
-  this->supportedReadingTypes.append(eDirectionReading);
-  this->supportedReadingTypes.append(eDistanceReading);
-  this->supportedReadingTypes.append(eCartesianReading);
+  this->supportedReadingTypes.append(ReadingTypes::ePolarReading);
+  this->supportedReadingTypes.append(ReadingTypes::eDirectionReading);
+  this->supportedReadingTypes.append(ReadingTypes::eDistanceReading);
+  this->supportedReadingTypes.append(ReadingTypes::eCartesianReading);
 
   // set supported sensor actions
-  this->supportedSensorActions.append(eConnect);
-  this->supportedSensorActions.append(eDisconnect);
-  this->supportedSensorActions.append(eMeasure);
-  this->supportedSensorActions.append(eMoveAngle);
-  this->supportedSensorActions.append(eMoveXYZ);
-  this->supportedSensorActions.append(eToggleSight);
+  this->supportedSensorActions.append(SensorFunctions::eConnect);
+  this->supportedSensorActions.append(SensorFunctions::eDisconnect);
+  this->supportedSensorActions.append(SensorFunctions::eMeasure);
+  this->supportedSensorActions.append(SensorFunctions::eMoveAngle);
+  this->supportedSensorActions.append(SensorFunctions::eMoveXYZ);
+  this->supportedSensorActions.append(SensorFunctions::eToggleSight);
 
   // GeoCom measurement is request/response; tracking/streaming is not driven
   // here yet
@@ -551,16 +551,16 @@ QList<QPointer<Reading> > LeicaTachymeter::measure(
   // measurements work with standard mode for precise measurements
   if (this->setTargetTypeMeasure()) {
     switch (getReadingType(mConfig)) {
-      case ePolarReading:
+      case ReadingTypes::ePolarReading:
         readings = this->measurePolar(mConfig);
         break;
-      case eCartesianReading:
+      case ReadingTypes::eCartesianReading:
         readings = this->measureCartesian(mConfig);
         break;
-      case eDirectionReading:
+      case ReadingTypes::eDirectionReading:
         readings = this->measureDirection(mConfig);
         break;
-      case eDistanceReading:
+      case ReadingTypes::eDistanceReading:
         readings = this->measureDistance(mConfig);
         break;
       default:
@@ -613,21 +613,21 @@ QVariantMap LeicaTachymeter::readingStream(const ReadingTypes& streamFormat) {
     }
 
     switch (streamFormat) {
-      case ePolarReading:
+      case ReadingTypes::ePolarReading:
         m.insert("azimuth", reading->getPolarReading().azimuth);
         m.insert("zenith", reading->getPolarReading().zenith);
         m.insert("distance", reading->getPolarReading().distance);
         break;
-      case eCartesianReading:
+      case ReadingTypes::eCartesianReading:
         m.insert("x", reading->getCartesianReading().xyz.getAt(0));
         m.insert("y", reading->getCartesianReading().xyz.getAt(1));
         m.insert("z", reading->getCartesianReading().xyz.getAt(2));
         break;
-      case eDirectionReading:
+      case ReadingTypes::eDirectionReading:
         m.insert("azimuth", reading->getPolarReading().azimuth);
         m.insert("zenith", reading->getPolarReading().zenith);
         break;
-      case eDistanceReading:
+      case ReadingTypes::eDistanceReading:
         m.insert("distance", reading->getPolarReading().distance);
         break;
       default:
@@ -942,9 +942,9 @@ bool LeicaTachymeter::checkCommandRC(QString command) {
  */
 SensorFaces LeicaTachymeter::getCurrentFace(double zenith) {
   if ((zenith >= 0.0) && (zenith < PI)) {
-    return eFrontSide;
+    return SensorFaces::eFrontSide;
   } else {
-    return eBackSide;
+    return SensorFaces::eBackSide;
   }
 }
 
@@ -1304,7 +1304,8 @@ QPointer<Reading> LeicaTachymeter::getStreamValues() {
  * \return
  */
 bool LeicaTachymeter::executeEDM() {
-  emit this->sensorMessage("start edm measurement", eInformationMessage);
+  emit this->sensorMessage("start edm measurement",
+                           MessageTypes::eInformationMessage);
 
   // QString edmCommand = "%R1Q,2008:1,1\r\n";  //maybe wrong. 1 = reflector
   // tape? try with the other values
