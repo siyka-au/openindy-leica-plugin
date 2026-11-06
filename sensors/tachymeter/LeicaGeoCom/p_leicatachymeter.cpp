@@ -727,7 +727,7 @@ QList<QPointer<Reading> > LeicaTachymeter::measurePolar(
 
           r = new Reading(rPolar);
           r->setSensorFace(this->getCurrentFace(rPolar.zenith));
-          r->setMeasuredAt(QDateTime::currentDateTime());
+          r->setMeasuredAt(std::chrono::system_clock::now());
           readings.append(r);
 
           if (faceCount == 2) {
@@ -778,7 +778,7 @@ QList<QPointer<Reading> > LeicaTachymeter::measureDistance(
 
           QPointer<Reading> reading = new Reading(rDistance);
           reading->setSensorFace(this->getCurrentFace(zenith));
-          reading->setMeasuredAt(QDateTime::currentDateTime());
+          reading->setMeasuredAt(std::chrono::system_clock::now());
           readings.append(reading);
 
           if (faceCount == 2) {
@@ -838,7 +838,7 @@ QList<QPointer<Reading> > LeicaTachymeter::measureDirection(
 
         QPointer<Reading> r = new Reading(rDirection);
         r->setSensorFace(this->getCurrentFace(rDirection.zenith));
-        r->setMeasuredAt(QDateTime::currentDateTime());
+        r->setMeasuredAt(std::chrono::system_clock::now());
         readings.append(r);
 
         if (faceCount == 2) {
@@ -1288,7 +1288,7 @@ QPointer<Reading> LeicaTachymeter::getStreamValues() {
 
           reading = new Reading(rPolar);
           reading->setSensorFace(this->getCurrentFace(rPolar.zenith));
-          reading->setMeasuredAt(QDateTime::currentDateTime());
+          reading->setMeasuredAt(std::chrono::system_clock::now());
 
           return reading;
         }
