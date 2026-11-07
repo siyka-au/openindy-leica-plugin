@@ -2,9 +2,11 @@
 
 #include <vector>
 
+#include "metaInfo.h"
+
 using namespace oi;
 
-LeicaPlugin::LeicaPlugin(QObject* parent) : QObject(parent) {}
+LeicaPlugin::LeicaPlugin() {}
 
 std::vector<oi::Guarded<Sensor> > LeicaPlugin::createSensors() {
   std::vector<oi::Guarded<Sensor> > resultSet;
@@ -65,3 +67,5 @@ oi::Guarded<ExchangeDefinedFormat> LeicaPlugin::createDefinedFormatExchange(
     const std::string& /*name*/) {
   return oi::Guarded<ExchangeDefinedFormat>(nullptr);
 }
+
+OI_DECLARE_PLUGIN_WITH_METADATA(LeicaPlugin, kOiPluginMetadataJson)

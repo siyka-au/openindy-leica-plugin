@@ -1,7 +1,5 @@
 #ifndef P_FACTORY_H
 #define P_FACTORY_H
-#include <QObject>
-#include <QtGlobal>
 #include <string>
 #include <vector>
 
@@ -20,13 +18,9 @@ using namespace oi;
  * factory methods just return empty lists - PseudoTracker and every fit/
  * construct/transform function still live in OpenIndyDefaultPlugin.
  */
-class LeicaPlugin : public QObject, Plugin {
-  Q_OBJECT
-  Q_PLUGIN_METADATA(IID Plugin_iidd FILE "metaInfo.json")
-  Q_INTERFACES(Plugin)
-
+class LeicaPlugin : public Plugin {
  public:
-  explicit LeicaPlugin(QObject* parent = 0);
+  LeicaPlugin();
 
   std::vector<oi::Guarded<Sensor> > createSensors();
   std::vector<oi::Guarded<Function> > createFunctions();

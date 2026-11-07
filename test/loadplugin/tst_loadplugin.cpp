@@ -4,18 +4,20 @@
 #include <vector>
 
 #include "plugin.h"
+#include "pluginloader.h"
 #include "sensortype.h"
 
 using namespace oi;
 
 /*!
  * Stage 5's acceptance criterion: "the Leica plugin builds and loads from
- * its own repo" - this loads the actual built .so through QPluginLoader,
- * the same mechanism PluginRepository uses at real app startup, rather
+ * its own repo" - this loads the actual built .so through core's
+ * oi::PluginLoader, the same mechanism the app uses at startup, rather
  * than just linking against the driver class directly. A driver that only
- * compiles but never actually resolves as a Qt plugin (wrong IID, missing
- * Q_PLUGIN_METADATA, metaInfo.json mismatch) would pass every other test
- * in this repo and still fail to load in the real app.
+ * compiles but never actually resolves as a plugin (missing
+ * OI_DECLARE_PLUGIN entry points, ABI mismatch, metaInfo.json mismatch)
+ * would pass every other test in this repo and still fail to load in the
+ * real app.
  */
 class LoadPluginTest : public QObject {
   Q_OBJECT
@@ -28,13 +30,14 @@ void LoadPluginTest::testLoadPlugin() {
   QString pluginPath = PLUGIN_PATH;
 
   QVERIFY2(QFile::exists(pluginPath), pluginPath.toLatin1().data());
-  QPluginLoader pluginLoader(pluginPath);
+  oi::PluginLoadResult loaded =
+      oi::PluginLoader::load(pluginPath.toStdString());
+  QVERIFY2(loaded, loaded.error.c_str());
 
-  QObject* plugin = pluginLoader.instance();
-  QVERIFY2(plugin, pluginLoader.errorString().toLatin1().data());
-
-  Plugin* oiPlugin = qobject_cast<Plugin*>(plugin);
-  QVERIFY2(oiPlugin, "qobject_cast");
+  Plugin* oiPlugin = loaded.plugin.get();
+  QVERIFY2(
+      loaded.plugin.metadataJson().find("\"isOiPlugin\"") != std::string::npos,
+      "plugin metadata missing");
 
   // this plugin is Leica-only: no functions, no bundle adjustments, no
   // simulations, no tools, no exchanges - just the sensor it exists for
