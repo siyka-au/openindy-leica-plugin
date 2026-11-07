@@ -545,9 +545,9 @@ bool LeicaTachymeter::move(const double& x, const double& y, const double& z) {
  * \param m
  * \return
  */
-std::vector<oi::Guarded<Reading> > LeicaTachymeter::measure(
+std::vector<std::unique_ptr<Reading>> LeicaTachymeter::measure(
     const MeasurementConfig& mConfig) {
-  std::vector<oi::Guarded<Reading> > readings;
+  std::vector<std::unique_ptr<Reading>> readings;
 
   // if tracking measurements are active, stop them
   // this->stopTrackingMode();
@@ -580,14 +580,9 @@ std::vector<oi::Guarded<Reading> > LeicaTachymeter::measure(
   // this->restartWatchWindowAfterMeasurement();
 
   if (readings.size() > 0) {
-    // delete old last reading
-    if (!this->lastReading.second.isNull()) {
-      delete this->lastReading.second;
-    }
-
-    this->lastReading.first = getReadingType(mConfig);
-    Reading* r = new Reading(*readings.back().data());
-    this->lastReading.second = r;
+    // the sensor keeps its own copy of the last reading
+    this->setLastReading(getReadingType(mConfig),
+                         std::make_unique<Reading>(*readings.back()));
   }
 
   return readings;
@@ -605,7 +600,7 @@ oi::ValueMap LeicaTachymeter::readingStream(const ReadingTypes& streamFormat) {
 
   oi::ValueMap m;
 
-  oi::Guarded<Reading> reading(nullptr);
+  std::unique_ptr<Reading> reading;
 
   // set target to specified value
   // Stream works with trk mode, for fast measurements
@@ -616,7 +611,7 @@ oi::ValueMap LeicaTachymeter::readingStream(const ReadingTypes& streamFormat) {
 
     QThread::msleep(100);
 
-    if (reading.isNull()) {
+    if (!reading) {
       return m;
     }
 
@@ -643,13 +638,8 @@ oi::ValueMap LeicaTachymeter::readingStream(const ReadingTypes& streamFormat) {
     }
   }
 
-  // delete old last reading
-  if (!this->lastReading.second.isNull()) {
-    delete this->lastReading.second;
-  }
-
-  this->lastReading.first = streamFormat;
-  this->lastReading.second = reading;
+  // replaces (and frees) the old last reading
+  this->setLastReading(streamFormat, std::move(reading));
 
   return m;
 }
@@ -691,9 +681,9 @@ bool LeicaTachymeter::getIsBusy() { return false; }
  * \param m
  * \return
  */
-std::vector<oi::Guarded<Reading> > LeicaTachymeter::measurePolar(
+std::vector<std::unique_ptr<Reading>> LeicaTachymeter::measurePolar(
     const MeasurementConfig& mConfig) {
-  std::vector<oi::Guarded<Reading> > readings;
+  std::vector<std::unique_ptr<Reading>> readings;
 
   int faceCount = 1;
 
@@ -705,7 +695,6 @@ std::vector<oi::Guarded<Reading> > LeicaTachymeter::measurePolar(
   if (this->serial->isOpen()) {
     for (int k = 0; k < faceCount; k++) {
       if (this->executeEDM()) {
-        Reading* r = nullptr;
         QString command = "%R1Q,2108:5000,1\r\n";
 
         if (executeCommand(command)) {
@@ -734,10 +723,10 @@ std::vector<oi::Guarded<Reading> > LeicaTachymeter::measurePolar(
           }
           rPolar.isValid = true;
 
-          r = new Reading(rPolar);
+          auto r = std::make_unique<Reading>(rPolar);
           r->setSensorFace(this->getCurrentFace(rPolar.zenith));
           r->setMeasuredAt(std::chrono::system_clock::now());
-          readings.push_back(r);
+          readings.push_back(std::move(r));
 
           if (faceCount == 2) {
             this->toggleSightOrientation();
@@ -757,9 +746,9 @@ std::vector<oi::Guarded<Reading> > LeicaTachymeter::measurePolar(
  * \param m
  * \return
  */
-std::vector<oi::Guarded<Reading> > LeicaTachymeter::measureDistance(
+std::vector<std::unique_ptr<Reading>> LeicaTachymeter::measureDistance(
     const MeasurementConfig& mConfig) {
-  std::vector<oi::Guarded<Reading> > readings;
+  std::vector<std::unique_ptr<Reading>> readings;
 
   int faceCount = 1;
 
@@ -786,10 +775,10 @@ std::vector<oi::Guarded<Reading> > LeicaTachymeter::measureDistance(
               polarElements.value(polarElements.size() - 1).toDouble();
           rDistance.isValid = true;
 
-          oi::Guarded<Reading> reading = new Reading(rDistance);
+          auto reading = std::make_unique<Reading>(rDistance);
           reading->setSensorFace(this->getCurrentFace(zenith));
           reading->setMeasuredAt(std::chrono::system_clock::now());
-          readings.push_back(reading);
+          readings.push_back(std::move(reading));
 
           if (faceCount == 2) {
             this->toggleSightOrientation();
@@ -809,9 +798,9 @@ std::vector<oi::Guarded<Reading> > LeicaTachymeter::measureDistance(
  * \param m
  * \return
  */
-std::vector<oi::Guarded<Reading> > LeicaTachymeter::measureDirection(
+std::vector<std::unique_ptr<Reading>> LeicaTachymeter::measureDirection(
     const MeasurementConfig& mConfig) {
-  std::vector<oi::Guarded<Reading> > readings;
+  std::vector<std::unique_ptr<Reading>> readings;
 
   int faceCount = 1;
 
@@ -847,10 +836,10 @@ std::vector<oi::Guarded<Reading> > LeicaTachymeter::measureDirection(
         }
         rDirection.isValid = true;
 
-        oi::Guarded<Reading> r = new Reading(rDirection);
+        auto r = std::make_unique<Reading>(rDirection);
         r->setSensorFace(this->getCurrentFace(rDirection.zenith));
         r->setMeasuredAt(std::chrono::system_clock::now());
-        readings.push_back(r);
+        readings.push_back(std::move(r));
 
         if (faceCount == 2) {
           this->toggleSightOrientation();
@@ -869,9 +858,9 @@ std::vector<oi::Guarded<Reading> > LeicaTachymeter::measureDirection(
  * \param m
  * \return
  */
-std::vector<oi::Guarded<Reading> > LeicaTachymeter::measureCartesian(
+std::vector<std::unique_ptr<Reading>> LeicaTachymeter::measureCartesian(
     const MeasurementConfig& mConfig) {
-  std::vector<oi::Guarded<Reading> > readings = this->measurePolar(mConfig);
+  std::vector<std::unique_ptr<Reading>> readings = this->measurePolar(mConfig);
 
   // this->stopTrackingAfterMeasure();
   // restart watchwindow if it was open before measurement
@@ -1256,8 +1245,8 @@ this->sensorConfiguration.getStringParameter().value("sense of rotation");
  * Performs a fast measurement for watch window
  * \return
  */
-oi::Guarded<Reading> LeicaTachymeter::getStreamValues() {
-  oi::Guarded<Reading> reading(nullptr);
+std::unique_ptr<Reading> LeicaTachymeter::getStreamValues() {
+  std::unique_ptr<Reading> reading;
 
   if (this->sensorConfiguration.getStringParameter().contains("reflector")) {
     QString value = QString::fromStdString(
@@ -1304,7 +1293,7 @@ oi::Guarded<Reading> LeicaTachymeter::getStreamValues() {
             }
           }
 
-          reading = new Reading(rPolar);
+          reading = std::make_unique<Reading>(rPolar);
           reading->setSensorFace(this->getCurrentFace(rPolar.zenith));
           reading->setMeasuredAt(std::chrono::system_clock::now());
 

@@ -8,6 +8,7 @@
 #include <QtGlobal>
 #include <QtSerialPort/QSerialPort>
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "totalstation.h"
@@ -36,7 +37,7 @@ class LeicaTachymeter : public TotalStation {
   bool connectSensor() override;
   bool disconnectSensor() override;
 
-  std::vector<oi::Guarded<Reading> > measure(
+  std::vector<std::unique_ptr<Reading>> measure(
       const MeasurementConfig& mConfig) override;
   oi::ValueMap readingStream(const ReadingTypes& streamFormat) override;
 
@@ -69,13 +70,13 @@ class LeicaTachymeter : public TotalStation {
  private:
   QPointer<QSerialPort> serial;
 
-  std::vector<oi::Guarded<Reading> > measurePolar(
+  std::vector<std::unique_ptr<Reading>> measurePolar(
       const MeasurementConfig& mConfig);
-  std::vector<oi::Guarded<Reading> > measureDistance(
+  std::vector<std::unique_ptr<Reading>> measureDistance(
       const MeasurementConfig& mConfig);
-  std::vector<oi::Guarded<Reading> > measureDirection(
+  std::vector<std::unique_ptr<Reading>> measureDirection(
       const MeasurementConfig& mConfig);
-  std::vector<oi::Guarded<Reading> > measureCartesian(
+  std::vector<std::unique_ptr<Reading>> measureCartesian(
       const MeasurementConfig& mConfig);
 
   QSerialPort::BaudRate myBaudRate;
@@ -115,7 +116,7 @@ class LeicaTachymeter : public TotalStation {
 
   // void stopTrackingMode();
 
-  oi::Guarded<Reading> getStreamValues();
+  std::unique_ptr<Reading> getStreamValues();
 };
 
 #endif  // P_LEICATACHYMETER_H

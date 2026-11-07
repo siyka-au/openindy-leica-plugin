@@ -1,5 +1,6 @@
 #include "p_factory.h"
 
+#include <memory>
 #include <vector>
 
 #include "metaInfo.h"
@@ -8,64 +9,65 @@ using namespace oi;
 
 LeicaPlugin::LeicaPlugin() {}
 
-std::vector<oi::Guarded<Sensor> > LeicaPlugin::createSensors() {
-  std::vector<oi::Guarded<Sensor> > resultSet;
-  resultSet.push_back(new LeicaTachymeter());
+std::vector<std::unique_ptr<Sensor>> LeicaPlugin::createSensors() {
+  std::vector<std::unique_ptr<Sensor>> resultSet;
+  resultSet.push_back(std::make_unique<LeicaTachymeter>());
   return resultSet;
 }
 
-std::vector<oi::Guarded<Function> > LeicaPlugin::createFunctions() {
-  return std::vector<oi::Guarded<Function> >();
+std::vector<std::unique_ptr<Function>> LeicaPlugin::createFunctions() {
+  return {};
 }
 
-std::vector<oi::Guarded<BundleAdjustment> >
+std::vector<std::unique_ptr<BundleAdjustment>>
 LeicaPlugin::createBundleAdjustments() {
-  return std::vector<oi::Guarded<BundleAdjustment> >();
+  return {};
 }
 
-std::vector<oi::Guarded<SimulationModel> > LeicaPlugin::createSimulations() {
-  return std::vector<oi::Guarded<SimulationModel> >();
+std::vector<std::unique_ptr<SimulationModel>> LeicaPlugin::createSimulations() {
+  return {};
 }
 
-std::vector<oi::Guarded<ExchangeSimpleAscii> >
+std::vector<std::unique_ptr<ExchangeSimpleAscii>>
 LeicaPlugin::createSimpleAsciiExchanges() {
-  return std::vector<oi::Guarded<ExchangeSimpleAscii> >();
+  return {};
 }
 
-std::vector<oi::Guarded<ExchangeDefinedFormat> >
+std::vector<std::unique_ptr<ExchangeDefinedFormat>>
 LeicaPlugin::createDefinedFormatExchanges() {
-  return std::vector<oi::Guarded<ExchangeDefinedFormat> >();
+  return {};
 }
 
-oi::Guarded<Sensor> LeicaPlugin::createSensor(const std::string& name) {
+std::unique_ptr<Sensor> LeicaPlugin::createSensor(const std::string& name) {
   if (name.compare("LeicaTachymeter") == 0) {
-    return new LeicaTachymeter();
+    return std::make_unique<LeicaTachymeter>();
   }
-  return oi::Guarded<Sensor>(nullptr);
+  return nullptr;
 }
 
-oi::Guarded<Function> LeicaPlugin::createFunction(const std::string& /*name*/) {
-  return oi::Guarded<Function>(nullptr);
-}
-
-oi::Guarded<BundleAdjustment> LeicaPlugin::createBundleAdjustment(
+std::unique_ptr<Function> LeicaPlugin::createFunction(
     const std::string& /*name*/) {
-  return oi::Guarded<BundleAdjustment>(nullptr);
+  return nullptr;
 }
 
-oi::Guarded<SimulationModel> LeicaPlugin::createSimulation(
+std::unique_ptr<BundleAdjustment> LeicaPlugin::createBundleAdjustment(
     const std::string& /*name*/) {
-  return oi::Guarded<SimulationModel>(nullptr);
+  return nullptr;
 }
 
-oi::Guarded<ExchangeSimpleAscii> LeicaPlugin::createSimpleAsciiExchange(
+std::unique_ptr<SimulationModel> LeicaPlugin::createSimulation(
     const std::string& /*name*/) {
-  return oi::Guarded<ExchangeSimpleAscii>(nullptr);
+  return nullptr;
 }
 
-oi::Guarded<ExchangeDefinedFormat> LeicaPlugin::createDefinedFormatExchange(
+std::unique_ptr<ExchangeSimpleAscii> LeicaPlugin::createSimpleAsciiExchange(
     const std::string& /*name*/) {
-  return oi::Guarded<ExchangeDefinedFormat>(nullptr);
+  return nullptr;
+}
+
+std::unique_ptr<ExchangeDefinedFormat> LeicaPlugin::createDefinedFormatExchange(
+    const std::string& /*name*/) {
+  return nullptr;
 }
 
 OI_DECLARE_PLUGIN_WITH_METADATA(LeicaPlugin, kOiPluginMetadataJson)

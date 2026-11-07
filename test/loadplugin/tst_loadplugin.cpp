@@ -44,11 +44,12 @@ void LoadPluginTest::testLoadPlugin() {
   QVERIFY2(oiPlugin->createFunctions().empty(),
            "expected no functions from a sensor-only plugin");
 
-  std::vector<oi::Guarded<Sensor> > sensors = oiPlugin->createSensors();
+  std::vector<std::unique_ptr<Sensor>> sensors = oiPlugin->createSensors();
   QCOMPARE(sensors.size(), 1);
 
-  oi::Guarded<Sensor> sensor = oiPlugin->createSensor("LeicaTachymeter");
-  QVERIFY2(!sensor.isNull(), "createSensor(\"LeicaTachymeter\") returned null");
+  std::unique_ptr<Sensor> sensor = oiPlugin->createSensor("LeicaTachymeter");
+  QVERIFY2(sensor != nullptr,
+           "createSensor(\"LeicaTachymeter\") returned null");
 
   sensor->init();
 
