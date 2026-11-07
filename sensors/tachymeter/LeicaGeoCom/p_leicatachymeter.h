@@ -3,6 +3,7 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QObject>
+#include <QPointer>
 #include <QThread>
 #include <QtGlobal>
 #include <QtSerialPort/QSerialPort>
@@ -28,7 +29,7 @@ class LeicaTachymeter : public TotalStation {
   // sensor state and actions
   // ########################
 
-  bool doSelfDefinedAction(const QString& action) override;
+  bool doSelfDefinedAction(const std::string& action) override;
 
   bool abortAction() override;
 
@@ -37,12 +38,11 @@ class LeicaTachymeter : public TotalStation {
 
   std::vector<oi::Guarded<Reading> > measure(
       const MeasurementConfig& mConfig) override;
-  std::map<QString, QVariant> readingStream(
-      const ReadingTypes& streamFormat) override;
+  oi::ValueMap readingStream(const ReadingTypes& streamFormat) override;
 
   bool getConnectionState() override;
   bool getIsReadyForMeasurement() override;
-  std::map<QString, QString> getSensorStatus() override;
+  std::map<std::string, std::string> getSensorStatus() override;
   bool getIsBusy() override;
 
  protected:

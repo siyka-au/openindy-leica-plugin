@@ -132,7 +132,7 @@ void LeicaTachymeter::init() {
  * \param action
  * \return
  */
-bool LeicaTachymeter::doSelfDefinedAction(const QString& action) {
+bool LeicaTachymeter::doSelfDefinedAction(const std::string& action) {
   /*
       qDebug() << "you pressed: " << action;
 
@@ -202,8 +202,8 @@ bool LeicaTachymeter::connectSensor() {
   // this->fineAdjusted = false;
 
   // set port
-  this->serial->setPortName(
-      this->sensorConfiguration.getConnectionConfig().comPort);
+  this->serial->setPortName(QString::fromStdString(
+      this->sensorConfiguration.getConnectionConfig().comPort));
 
   // open com port and set parameters
   if (this->serial->open(QIODevice::ReadWrite)) {
@@ -440,9 +440,9 @@ bool LeicaTachymeter::move(const double& azimuth, const double& zenith,
       // correct the values depending on specified sense of rotation
       if (this->sensorConfiguration.getStringParameter().contains(
               "sense of rotation")) {
-        QString sense =
+        QString sense = QString::fromStdString(
             oi::value(this->sensorConfiguration.getStringParameter(),
-                      "sense of rotation");
+                      std::string("sense of rotation")));
         if (sense.compare("mathematical") == 0) {
           az = 2 * PI - az;
         }
@@ -508,8 +508,9 @@ bool LeicaTachymeter::move(const double& x, const double& y, const double& z) {
     // correct the values depending on specified sense of rotation
     if (this->sensorConfiguration.getStringParameter().contains(
             "sense of rotation")) {
-      QString sense = oi::value(this->sensorConfiguration.getStringParameter(),
-                                "sense of rotation");
+      QString sense = QString::fromStdString(
+          oi::value(this->sensorConfiguration.getStringParameter(),
+                    std::string("sense of rotation")));
       if (sense.compare("mathematical") == 0) {
         rPolar.azimuth = 2 * PI - rPolar.azimuth;
       }
@@ -597,13 +598,12 @@ std::vector<oi::Guarded<Reading> > LeicaTachymeter::measure(
  * \param streamFormat
  * \return
  */
-std::map<QString, QVariant> LeicaTachymeter::readingStream(
-    const ReadingTypes& streamFormat) {
+oi::ValueMap LeicaTachymeter::readingStream(const ReadingTypes& streamFormat) {
   // this->currentStreamFormat = streamFormat;
 
   // this->watchWindowOpen = true;
 
-  std::map<QString, QVariant> m;
+  oi::ValueMap m;
 
   oi::Guarded<Reading> reading(nullptr);
 
@@ -672,10 +672,10 @@ bool LeicaTachymeter::getIsReadyForMeasurement() {
  * \brief getSensorStats
  * \return
  */
-std::map<QString, QString> LeicaTachymeter::getSensorStatus() {
-  std::map<QString, QString> stats;
+std::map<std::string, std::string> LeicaTachymeter::getSensorStatus() {
+  std::map<std::string, std::string> stats;
 
-  stats.insert_or_assign("connected", QString::number(this->serial->isOpen()));
+  stats.insert_or_assign("connected", this->serial->isOpen() ? "1" : "0");
 
   return stats;
 }
@@ -724,9 +724,9 @@ std::vector<oi::Guarded<Reading> > LeicaTachymeter::measurePolar(
           // correct the values depending on specified sense of rotation
           if (this->sensorConfiguration.getStringParameter().contains(
                   "sense of rotation")) {
-            QString sense =
+            QString sense = QString::fromStdString(
                 oi::value(this->sensorConfiguration.getStringParameter(),
-                          "sense of rotation");
+                          std::string("sense of rotation")));
             if (sense.compare("mathematical") == 0) {
               rPolar.azimuth = 2 * PI - rPolar.azimuth;
             }
@@ -836,9 +836,9 @@ std::vector<oi::Guarded<Reading> > LeicaTachymeter::measureDirection(
         // correct the values depending on specified sense of rotation
         if (this->sensorConfiguration.getStringParameter().contains(
                 "sense of rotation")) {
-          QString sense =
+          QString sense = QString::fromStdString(
               oi::value(this->sensorConfiguration.getStringParameter(),
-                        "sense of rotation");
+                        std::string("sense of rotation")));
           if (sense.compare("mathematical") == 0) {
             rDirection.azimuth = 2 * PI - rDirection.azimuth;
           }
@@ -969,13 +969,15 @@ bool LeicaTachymeter::setTargetTypeMeasure() {
   QString measureMode = "";
 
   if (this->sensorConfiguration.getStringParameter().contains("reflector")) {
-    refl =
-        oi::value(this->sensorConfiguration.getStringParameter(), "reflector");
+    refl = QString::fromStdString(
+        oi::value(this->sensorConfiguration.getStringParameter(),
+                  std::string("reflector")));
   }
 
   if (this->sensorConfiguration.getStringParameter().contains("measure mode")) {
-    measureMode = oi::value(this->sensorConfiguration.getStringParameter(),
-                            "measure mode");
+    measureMode = QString::fromStdString(
+        oi::value(this->sensorConfiguration.getStringParameter(),
+                  std::string("measure mode")));
   }
 
   // check if reflectorless was selected
@@ -1042,8 +1044,9 @@ bool LeicaTachymeter::setTargetTypeStream() {
   bool reflless = false;
 
   if (this->sensorConfiguration.getStringParameter().contains("reflector")) {
-    refl =
-        oi::value(this->sensorConfiguration.getStringParameter(), "reflector");
+    refl = QString::fromStdString(
+        oi::value(this->sensorConfiguration.getStringParameter(),
+                  std::string("reflector")));
   }
 
   // check if reflectorless was selected
@@ -1255,8 +1258,9 @@ oi::Guarded<Reading> LeicaTachymeter::getStreamValues() {
   oi::Guarded<Reading> reading(nullptr);
 
   if (this->sensorConfiguration.getStringParameter().contains("reflector")) {
-    QString value =
-        oi::value(this->sensorConfiguration.getStringParameter(), "reflector");
+    QString value = QString::fromStdString(
+        oi::value(this->sensorConfiguration.getStringParameter(),
+                  std::string("reflector")));
     QString command;
 
     if (value.compare("reflector") == 0) {
@@ -1289,9 +1293,9 @@ oi::Guarded<Reading> LeicaTachymeter::getStreamValues() {
           // adjust azimuth according to the sense of rotation
           if (this->sensorConfiguration.getStringParameter().contains(
                   "sense of rotation")) {
-            QString sense =
+            QString sense = QString::fromStdString(
                 oi::value(this->sensorConfiguration.getStringParameter(),
-                          "sense of rotation");
+                          std::string("sense of rotation")));
             if (sense.compare("mathematical") == 0) {
               rPolar.azimuth = 2 * PI - rPolar.azimuth;
             }
@@ -1322,8 +1326,9 @@ bool LeicaTachymeter::executeEDM() {
   // tape? try with the other values
 
   if (this->sensorConfiguration.getStringParameter().contains("reflector")) {
-    QString value =
-        oi::value(this->sensorConfiguration.getStringParameter(), "reflector");
+    QString value = QString::fromStdString(
+        oi::value(this->sensorConfiguration.getStringParameter(),
+                  std::string("reflector")));
     QString edmCommand;
 
     if (value.compare("reflector") == 0) {

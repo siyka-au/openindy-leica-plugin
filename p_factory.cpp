@@ -35,33 +35,33 @@ LeicaPlugin::createDefinedFormatExchanges() {
   return std::vector<oi::Guarded<ExchangeDefinedFormat> >();
 }
 
-oi::Guarded<Sensor> LeicaPlugin::createSensor(const QString& name) {
+oi::Guarded<Sensor> LeicaPlugin::createSensor(const std::string& name) {
   if (name.compare("LeicaTachymeter") == 0) {
     return new LeicaTachymeter();
   }
   return oi::Guarded<Sensor>(nullptr);
 }
 
-oi::Guarded<Function> LeicaPlugin::createFunction(const QString& /*name*/) {
+oi::Guarded<Function> LeicaPlugin::createFunction(const std::string& /*name*/) {
   return oi::Guarded<Function>(nullptr);
 }
 
 oi::Guarded<BundleAdjustment> LeicaPlugin::createBundleAdjustment(
-    const QString& /*name*/) {
+    const std::string& /*name*/) {
   return oi::Guarded<BundleAdjustment>(nullptr);
 }
 
 oi::Guarded<SimulationModel> LeicaPlugin::createSimulation(
-    const QString& /*name*/) {
+    const std::string& /*name*/) {
   return oi::Guarded<SimulationModel>(nullptr);
 }
 
 oi::Guarded<ExchangeSimpleAscii> LeicaPlugin::createSimpleAsciiExchange(
-    const QString& /*name*/) {
+    const std::string& /*name*/) {
   return oi::Guarded<ExchangeSimpleAscii>(nullptr);
 }
 
 oi::Guarded<ExchangeDefinedFormat> LeicaPlugin::createDefinedFormatExchange(
-    const QString& /*name*/) {
+    const std::string& /*name*/) {
   return oi::Guarded<ExchangeDefinedFormat>(nullptr);
 }
