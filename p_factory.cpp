@@ -1,35 +1,38 @@
 #include "p_factory.h"
 
+#include <vector>
+
 using namespace oi;
 
 LeicaPlugin::LeicaPlugin(QObject* parent) : QObject(parent) {}
 
-QList<oi::Guarded<Sensor> > LeicaPlugin::createSensors() {
-  QList<oi::Guarded<Sensor> > resultSet;
-  resultSet.append(new LeicaTachymeter());
+std::vector<oi::Guarded<Sensor> > LeicaPlugin::createSensors() {
+  std::vector<oi::Guarded<Sensor> > resultSet;
+  resultSet.push_back(new LeicaTachymeter());
   return resultSet;
 }
 
-QList<oi::Guarded<Function> > LeicaPlugin::createFunctions() {
-  return QList<oi::Guarded<Function> >();
+std::vector<oi::Guarded<Function> > LeicaPlugin::createFunctions() {
+  return std::vector<oi::Guarded<Function> >();
 }
 
-QList<oi::Guarded<BundleAdjustment> > LeicaPlugin::createBundleAdjustments() {
-  return QList<oi::Guarded<BundleAdjustment> >();
+std::vector<oi::Guarded<BundleAdjustment> >
+LeicaPlugin::createBundleAdjustments() {
+  return std::vector<oi::Guarded<BundleAdjustment> >();
 }
 
-QList<oi::Guarded<SimulationModel> > LeicaPlugin::createSimulations() {
-  return QList<oi::Guarded<SimulationModel> >();
+std::vector<oi::Guarded<SimulationModel> > LeicaPlugin::createSimulations() {
+  return std::vector<oi::Guarded<SimulationModel> >();
 }
 
-QList<oi::Guarded<ExchangeSimpleAscii> >
+std::vector<oi::Guarded<ExchangeSimpleAscii> >
 LeicaPlugin::createSimpleAsciiExchanges() {
-  return QList<oi::Guarded<ExchangeSimpleAscii> >();
+  return std::vector<oi::Guarded<ExchangeSimpleAscii> >();
 }
 
-QList<oi::Guarded<ExchangeDefinedFormat> >
+std::vector<oi::Guarded<ExchangeDefinedFormat> >
 LeicaPlugin::createDefinedFormatExchanges() {
-  return QList<oi::Guarded<ExchangeDefinedFormat> >();
+  return std::vector<oi::Guarded<ExchangeDefinedFormat> >();
 }
 
 oi::Guarded<Sensor> LeicaPlugin::createSensor(const QString& name) {

@@ -1,9 +1,9 @@
 #ifndef P_FACTORY_H
 #define P_FACTORY_H
-
 #include <QObject>
 #include <QString>
 #include <QtGlobal>
+#include <vector>
 
 #include "p_leicatachymeter.h"
 #include "plugin.h"
@@ -28,12 +28,13 @@ class LeicaPlugin : public QObject, Plugin {
  public:
   explicit LeicaPlugin(QObject* parent = 0);
 
-  QList<oi::Guarded<Sensor> > createSensors();
-  QList<oi::Guarded<Function> > createFunctions();
-  QList<oi::Guarded<BundleAdjustment> > createBundleAdjustments();
-  QList<oi::Guarded<SimulationModel> > createSimulations();
-  QList<oi::Guarded<ExchangeSimpleAscii> > createSimpleAsciiExchanges();
-  QList<oi::Guarded<ExchangeDefinedFormat> > createDefinedFormatExchanges();
+  std::vector<oi::Guarded<Sensor> > createSensors();
+  std::vector<oi::Guarded<Function> > createFunctions();
+  std::vector<oi::Guarded<BundleAdjustment> > createBundleAdjustments();
+  std::vector<oi::Guarded<SimulationModel> > createSimulations();
+  std::vector<oi::Guarded<ExchangeSimpleAscii> > createSimpleAsciiExchanges();
+  std::vector<oi::Guarded<ExchangeDefinedFormat> >
+  createDefinedFormatExchanges();
 
   oi::Guarded<Sensor> createSensor(const QString& name);
   oi::Guarded<Function> createFunction(const QString& name);

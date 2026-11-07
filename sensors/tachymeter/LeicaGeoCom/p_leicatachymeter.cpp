@@ -1,5 +1,10 @@
 #include "p_leicatachymeter.h"
 
+#include <map>
+#include <vector>
+
+#include "containers.h"
+
 /*!
  * \brief LeicaTachymeter::init
  */
@@ -12,22 +17,22 @@ void LeicaTachymeter::init() {
   this->metaData.iid = TotalStation_iidd;
 
   // set supported reading types
-  this->supportedReadingTypes.append(ReadingTypes::ePolarReading);
-  this->supportedReadingTypes.append(ReadingTypes::eDirectionReading);
-  this->supportedReadingTypes.append(ReadingTypes::eDistanceReading);
-  this->supportedReadingTypes.append(ReadingTypes::eCartesianReading);
+  this->supportedReadingTypes.push_back(ReadingTypes::ePolarReading);
+  this->supportedReadingTypes.push_back(ReadingTypes::eDirectionReading);
+  this->supportedReadingTypes.push_back(ReadingTypes::eDistanceReading);
+  this->supportedReadingTypes.push_back(ReadingTypes::eCartesianReading);
 
   // set supported sensor actions
-  this->supportedSensorActions.append(SensorFunctions::eConnect);
-  this->supportedSensorActions.append(SensorFunctions::eDisconnect);
-  this->supportedSensorActions.append(SensorFunctions::eMeasure);
-  this->supportedSensorActions.append(SensorFunctions::eMoveAngle);
-  this->supportedSensorActions.append(SensorFunctions::eMoveXYZ);
-  this->supportedSensorActions.append(SensorFunctions::eToggleSight);
+  this->supportedSensorActions.push_back(SensorFunctions::eConnect);
+  this->supportedSensorActions.push_back(SensorFunctions::eDisconnect);
+  this->supportedSensorActions.push_back(SensorFunctions::eMeasure);
+  this->supportedSensorActions.push_back(SensorFunctions::eMoveAngle);
+  this->supportedSensorActions.push_back(SensorFunctions::eMoveXYZ);
+  this->supportedSensorActions.push_back(SensorFunctions::eToggleSight);
 
   // GeoCom measurement is request/response; tracking/streaming is not driven
   // here yet
-  this->supportedAcquisitionModes.append(AcquisitionMode::eDiscrete);
+  this->supportedAcquisitionModes.push_back(AcquisitionMode::eDiscrete);
 
   // publish this driver's own config catalog - PluginRepository tags each
   // with this sensor's type when it scans the plugin, so a config selected
@@ -43,7 +48,7 @@ void LeicaTachymeter::init() {
     fastPoint.setMeasurementMode(MeasurementModes::eFast_MeasurementMode);
     fastPoint.setMeasureTwoSides(false);
     fastPoint.makeStandardConfig();
-    this->supportedMeasurementConfigs.append(fastPoint);
+    this->supportedMeasurementConfigs.push_back(fastPoint);
 
     MeasurementConfig stdPoint;
     stdPoint.setName("StdPoint");
@@ -52,7 +57,7 @@ void LeicaTachymeter::init() {
     stdPoint.setMeasurementMode(MeasurementModes::eStandard_MeasurementMode);
     stdPoint.setMeasureTwoSides(false);
     stdPoint.makeStandardConfig();
-    this->supportedMeasurementConfigs.append(stdPoint);
+    this->supportedMeasurementConfigs.push_back(stdPoint);
 
     MeasurementConfig precisePoint;
     precisePoint.setName("PrecisePoint");
@@ -62,7 +67,7 @@ void LeicaTachymeter::init() {
     precisePoint.setMeasurementMode(MeasurementModes::ePrecise_MeasurementMode);
     precisePoint.setMeasureTwoSides(false);
     precisePoint.makeStandardConfig();
-    this->supportedMeasurementConfigs.append(precisePoint);
+    this->supportedMeasurementConfigs.push_back(precisePoint);
 
     MeasurementConfig stdTwoSide;
     stdTwoSide.setName("StdTwoSide");
@@ -72,34 +77,35 @@ void LeicaTachymeter::init() {
     stdTwoSide.setMeasurementMode(MeasurementModes::eStandard_MeasurementMode);
     stdTwoSide.setMeasureTwoSides(true);
     stdTwoSide.makeStandardConfig();
-    this->supportedMeasurementConfigs.append(stdTwoSide);
+    this->supportedMeasurementConfigs.push_back(stdTwoSide);
   }
 
   // set supported connection types
-  this->supportedConnectionTypes.append(ConnectionKind::serial());
+  this->supportedConnectionTypes.push_back(ConnectionKind::serial());
 
   // set string parameter
-  this->stringParameters.insert("reflector", "reflectorless");
-  this->stringParameters.insert("reflector", "reflector");
-  this->stringParameters.insert("ATR", "atr off");
-  this->stringParameters.insert("ATR", "atr on");
-  this->stringParameters.insert("stop tracking after measurement", "yes");
-  this->stringParameters.insert("stop tracking after measurement", "no");
-  this->stringParameters.insert("ATR accuracy", "angle tolerance");
-  this->stringParameters.insert("ATR accuracy", "point tolerance");
-  this->stringParameters.insert("sense of rotation", "geodetic");
-  this->stringParameters.insert("sense of rotation", "mathematical");
-  this->stringParameters.insert("laser beam after aim", "no");
-  this->stringParameters.insert("laser beam after aim", "yes");
-  this->stringParameters.insert("reading type", "polar");
-  this->stringParameters.insert("reading type", "cartesian");
+  this->stringParameters.emplace("reflector", "reflectorless");
+  this->stringParameters.emplace("reflector", "reflector");
+  this->stringParameters.emplace("ATR", "atr off");
+  this->stringParameters.emplace("ATR", "atr on");
+  this->stringParameters.emplace("stop tracking after measurement", "yes");
+  this->stringParameters.emplace("stop tracking after measurement", "no");
+  this->stringParameters.emplace("ATR accuracy", "angle tolerance");
+  this->stringParameters.emplace("ATR accuracy", "point tolerance");
+  this->stringParameters.emplace("sense of rotation", "geodetic");
+  this->stringParameters.emplace("sense of rotation", "mathematical");
+  this->stringParameters.emplace("laser beam after aim", "no");
+  this->stringParameters.emplace("laser beam after aim", "yes");
+  this->stringParameters.emplace("reading type", "polar");
+  this->stringParameters.emplace("reading type", "cartesian");
 
   // set self defined actions
-  this->selfDefinedActions.append("lock to prism");    // start tracking
-  this->selfDefinedActions.append("stop prism lock");  // stop tracking
-  this->selfDefinedActions.append(
+  this->selfDefinedActions.push_back("lock to prism");    // start tracking
+  this->selfDefinedActions.push_back("stop prism lock");  // stop tracking
+  this->selfDefinedActions.push_back(
       "stop measurement");  // call this to stop tracking mode
-  this->selfDefinedActions.append("laserPointer");  // turn on/off laser pointer
+  this->selfDefinedActions.push_back(
+      "laserPointer");  // turn on/off laser pointer
 
   // set default accuracy
   this->defaultAccuracy.sigmaAzimuth = 0.000001570;
@@ -268,8 +274,8 @@ bool LeicaTachymeter::toggleSightOrientation() {
 
         if(executeCommand(command)){
             QString measureData = this->receive();
-            QStringList responseElements = measureData.split(":");
-            QStringList elements = responseElements.at(1).split(",");
+            std::vector<QString> responseElements = measureData.split(":");
+            std::vector<QString> elements = responseElements.at(1).split(",");
 
             //if LOCK is supported
             if(elements.at(0).compare("0") == 0){
@@ -434,8 +440,9 @@ bool LeicaTachymeter::move(const double& azimuth, const double& zenith,
       // correct the values depending on specified sense of rotation
       if (this->sensorConfiguration.getStringParameter().contains(
               "sense of rotation")) {
-        QString sense = this->sensorConfiguration.getStringParameter().value(
-            "sense of rotation");
+        QString sense =
+            oi::value(this->sensorConfiguration.getStringParameter(),
+                      "sense of rotation");
         if (sense.compare("mathematical") == 0) {
           az = 2 * PI - az;
         }
@@ -501,8 +508,8 @@ bool LeicaTachymeter::move(const double& x, const double& y, const double& z) {
     // correct the values depending on specified sense of rotation
     if (this->sensorConfiguration.getStringParameter().contains(
             "sense of rotation")) {
-      QString sense = this->sensorConfiguration.getStringParameter().value(
-          "sense of rotation");
+      QString sense = oi::value(this->sensorConfiguration.getStringParameter(),
+                                "sense of rotation");
       if (sense.compare("mathematical") == 0) {
         rPolar.azimuth = 2 * PI - rPolar.azimuth;
       }
@@ -537,9 +544,9 @@ bool LeicaTachymeter::move(const double& x, const double& y, const double& z) {
  * \param m
  * \return
  */
-QList<oi::Guarded<Reading> > LeicaTachymeter::measure(
+std::vector<oi::Guarded<Reading> > LeicaTachymeter::measure(
     const MeasurementConfig& mConfig) {
-  QList<oi::Guarded<Reading> > readings;
+  std::vector<oi::Guarded<Reading> > readings;
 
   // if tracking measurements are active, stop them
   // this->stopTrackingMode();
@@ -578,7 +585,7 @@ QList<oi::Guarded<Reading> > LeicaTachymeter::measure(
     }
 
     this->lastReading.first = getReadingType(mConfig);
-    Reading* r = new Reading(*readings.last().data());
+    Reading* r = new Reading(*readings.back().data());
     this->lastReading.second = r;
   }
 
@@ -590,12 +597,13 @@ QList<oi::Guarded<Reading> > LeicaTachymeter::measure(
  * \param streamFormat
  * \return
  */
-QVariantMap LeicaTachymeter::readingStream(const ReadingTypes& streamFormat) {
+std::map<QString, QVariant> LeicaTachymeter::readingStream(
+    const ReadingTypes& streamFormat) {
   // this->currentStreamFormat = streamFormat;
 
   // this->watchWindowOpen = true;
 
-  QVariantMap m;
+  std::map<QString, QVariant> m;
 
   oi::Guarded<Reading> reading(nullptr);
 
@@ -614,21 +622,21 @@ QVariantMap LeicaTachymeter::readingStream(const ReadingTypes& streamFormat) {
 
     switch (streamFormat) {
       case ReadingTypes::ePolarReading:
-        m.insert("azimuth", reading->getPolarReading().azimuth);
-        m.insert("zenith", reading->getPolarReading().zenith);
-        m.insert("distance", reading->getPolarReading().distance);
+        m.insert_or_assign("azimuth", reading->getPolarReading().azimuth);
+        m.insert_or_assign("zenith", reading->getPolarReading().zenith);
+        m.insert_or_assign("distance", reading->getPolarReading().distance);
         break;
       case ReadingTypes::eCartesianReading:
-        m.insert("x", reading->getCartesianReading().xyz.getAt(0));
-        m.insert("y", reading->getCartesianReading().xyz.getAt(1));
-        m.insert("z", reading->getCartesianReading().xyz.getAt(2));
+        m.insert_or_assign("x", reading->getCartesianReading().xyz.getAt(0));
+        m.insert_or_assign("y", reading->getCartesianReading().xyz.getAt(1));
+        m.insert_or_assign("z", reading->getCartesianReading().xyz.getAt(2));
         break;
       case ReadingTypes::eDirectionReading:
-        m.insert("azimuth", reading->getPolarReading().azimuth);
-        m.insert("zenith", reading->getPolarReading().zenith);
+        m.insert_or_assign("azimuth", reading->getPolarReading().azimuth);
+        m.insert_or_assign("zenith", reading->getPolarReading().zenith);
         break;
       case ReadingTypes::eDistanceReading:
-        m.insert("distance", reading->getPolarReading().distance);
+        m.insert_or_assign("distance", reading->getPolarReading().distance);
         break;
       default:
         break;
@@ -664,10 +672,10 @@ bool LeicaTachymeter::getIsReadyForMeasurement() {
  * \brief getSensorStats
  * \return
  */
-QMap<QString, QString> LeicaTachymeter::getSensorStatus() {
-  QMap<QString, QString> stats;
+std::map<QString, QString> LeicaTachymeter::getSensorStatus() {
+  std::map<QString, QString> stats;
 
-  stats.insert("connected", QString::number(this->serial->isOpen()));
+  stats.insert_or_assign("connected", QString::number(this->serial->isOpen()));
 
   return stats;
 }
@@ -683,9 +691,9 @@ bool LeicaTachymeter::getIsBusy() { return false; }
  * \param m
  * \return
  */
-QList<oi::Guarded<Reading> > LeicaTachymeter::measurePolar(
+std::vector<oi::Guarded<Reading> > LeicaTachymeter::measurePolar(
     const MeasurementConfig& mConfig) {
-  QList<oi::Guarded<Reading> > readings;
+  std::vector<oi::Guarded<Reading> > readings;
 
   int faceCount = 1;
 
@@ -717,8 +725,8 @@ QList<oi::Guarded<Reading> > LeicaTachymeter::measurePolar(
           if (this->sensorConfiguration.getStringParameter().contains(
                   "sense of rotation")) {
             QString sense =
-                this->sensorConfiguration.getStringParameter().value(
-                    "sense of rotation");
+                oi::value(this->sensorConfiguration.getStringParameter(),
+                          "sense of rotation");
             if (sense.compare("mathematical") == 0) {
               rPolar.azimuth = 2 * PI - rPolar.azimuth;
             }
@@ -728,7 +736,7 @@ QList<oi::Guarded<Reading> > LeicaTachymeter::measurePolar(
           r = new Reading(rPolar);
           r->setSensorFace(this->getCurrentFace(rPolar.zenith));
           r->setMeasuredAt(std::chrono::system_clock::now());
-          readings.append(r);
+          readings.push_back(r);
 
           if (faceCount == 2) {
             this->toggleSightOrientation();
@@ -748,9 +756,9 @@ QList<oi::Guarded<Reading> > LeicaTachymeter::measurePolar(
  * \param m
  * \return
  */
-QList<oi::Guarded<Reading> > LeicaTachymeter::measureDistance(
+std::vector<oi::Guarded<Reading> > LeicaTachymeter::measureDistance(
     const MeasurementConfig& mConfig) {
-  QList<oi::Guarded<Reading> > readings;
+  std::vector<oi::Guarded<Reading> > readings;
 
   int faceCount = 1;
 
@@ -779,7 +787,7 @@ QList<oi::Guarded<Reading> > LeicaTachymeter::measureDistance(
           oi::Guarded<Reading> reading = new Reading(rDistance);
           reading->setSensorFace(this->getCurrentFace(zenith));
           reading->setMeasuredAt(std::chrono::system_clock::now());
-          readings.append(reading);
+          readings.push_back(reading);
 
           if (faceCount == 2) {
             this->toggleSightOrientation();
@@ -799,9 +807,9 @@ QList<oi::Guarded<Reading> > LeicaTachymeter::measureDistance(
  * \param m
  * \return
  */
-QList<oi::Guarded<Reading> > LeicaTachymeter::measureDirection(
+std::vector<oi::Guarded<Reading> > LeicaTachymeter::measureDirection(
     const MeasurementConfig& mConfig) {
-  QList<oi::Guarded<Reading> > readings;
+  std::vector<oi::Guarded<Reading> > readings;
 
   int faceCount = 1;
 
@@ -828,8 +836,9 @@ QList<oi::Guarded<Reading> > LeicaTachymeter::measureDirection(
         // correct the values depending on specified sense of rotation
         if (this->sensorConfiguration.getStringParameter().contains(
                 "sense of rotation")) {
-          QString sense = this->sensorConfiguration.getStringParameter().value(
-              "sense of rotation");
+          QString sense =
+              oi::value(this->sensorConfiguration.getStringParameter(),
+                        "sense of rotation");
           if (sense.compare("mathematical") == 0) {
             rDirection.azimuth = 2 * PI - rDirection.azimuth;
           }
@@ -839,7 +848,7 @@ QList<oi::Guarded<Reading> > LeicaTachymeter::measureDirection(
         oi::Guarded<Reading> r = new Reading(rDirection);
         r->setSensorFace(this->getCurrentFace(rDirection.zenith));
         r->setMeasuredAt(std::chrono::system_clock::now());
-        readings.append(r);
+        readings.push_back(r);
 
         if (faceCount == 2) {
           this->toggleSightOrientation();
@@ -858,9 +867,9 @@ QList<oi::Guarded<Reading> > LeicaTachymeter::measureDirection(
  * \param m
  * \return
  */
-QList<oi::Guarded<Reading> > LeicaTachymeter::measureCartesian(
+std::vector<oi::Guarded<Reading> > LeicaTachymeter::measureCartesian(
     const MeasurementConfig& mConfig) {
-  QList<oi::Guarded<Reading> > readings = this->measurePolar(mConfig);
+  std::vector<oi::Guarded<Reading> > readings = this->measurePolar(mConfig);
 
   // this->stopTrackingAfterMeasure();
   // restart watchwindow if it was open before measurement
@@ -960,12 +969,13 @@ bool LeicaTachymeter::setTargetTypeMeasure() {
   QString measureMode = "";
 
   if (this->sensorConfiguration.getStringParameter().contains("reflector")) {
-    refl = this->sensorConfiguration.getStringParameter().value("reflector");
+    refl =
+        oi::value(this->sensorConfiguration.getStringParameter(), "reflector");
   }
 
   if (this->sensorConfiguration.getStringParameter().contains("measure mode")) {
-    measureMode =
-        this->sensorConfiguration.getStringParameter().value("measure mode");
+    measureMode = oi::value(this->sensorConfiguration.getStringParameter(),
+                            "measure mode");
   }
 
   // check if reflectorless was selected
@@ -1032,7 +1042,8 @@ bool LeicaTachymeter::setTargetTypeStream() {
   bool reflless = false;
 
   if (this->sensorConfiguration.getStringParameter().contains("reflector")) {
-    refl = this->sensorConfiguration.getStringParameter().value("reflector");
+    refl =
+        oi::value(this->sensorConfiguration.getStringParameter(), "reflector");
   }
 
   // check if reflectorless was selected
@@ -1245,7 +1256,7 @@ oi::Guarded<Reading> LeicaTachymeter::getStreamValues() {
 
   if (this->sensorConfiguration.getStringParameter().contains("reflector")) {
     QString value =
-        this->sensorConfiguration.getStringParameter().value("reflector");
+        oi::value(this->sensorConfiguration.getStringParameter(), "reflector");
     QString command;
 
     if (value.compare("reflector") == 0) {
@@ -1279,8 +1290,8 @@ oi::Guarded<Reading> LeicaTachymeter::getStreamValues() {
           if (this->sensorConfiguration.getStringParameter().contains(
                   "sense of rotation")) {
             QString sense =
-                this->sensorConfiguration.getStringParameter().value(
-                    "sense of rotation");
+                oi::value(this->sensorConfiguration.getStringParameter(),
+                          "sense of rotation");
             if (sense.compare("mathematical") == 0) {
               rPolar.azimuth = 2 * PI - rPolar.azimuth;
             }
@@ -1312,7 +1323,7 @@ bool LeicaTachymeter::executeEDM() {
 
   if (this->sensorConfiguration.getStringParameter().contains("reflector")) {
     QString value =
-        this->sensorConfiguration.getStringParameter().value("reflector");
+        oi::value(this->sensorConfiguration.getStringParameter(), "reflector");
     QString edmCommand;
 
     if (value.compare("reflector") == 0) {

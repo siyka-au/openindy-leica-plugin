@@ -1,7 +1,7 @@
-#include <QList>
 #include <QPointer>
 #include <QString>
 #include <QtTest>
+#include <vector>
 
 #include "plugin.h"
 #include "sensortype.h"
@@ -38,10 +38,10 @@ void LoadPluginTest::testLoadPlugin() {
 
   // this plugin is Leica-only: no functions, no bundle adjustments, no
   // simulations, no tools, no exchanges - just the sensor it exists for
-  QVERIFY2(oiPlugin->createFunctions().isEmpty(),
+  QVERIFY2(oiPlugin->createFunctions().empty(),
            "expected no functions from a sensor-only plugin");
 
-  QList<oi::Guarded<Sensor> > sensors = oiPlugin->createSensors();
+  std::vector<oi::Guarded<Sensor> > sensors = oiPlugin->createSensors();
   QCOMPARE(sensors.size(), 1);
 
   oi::Guarded<Sensor> sensor = oiPlugin->createSensor("LeicaTachymeter");
@@ -56,7 +56,7 @@ void LoadPluginTest::testLoadPlugin() {
   QVERIFY2(type.isValid(),
            "LeicaTachymeter's IID must resolve to a valid SensorType");
 
-  QVERIFY2(!sensor->getSupportedMeasurementConfigs().isEmpty(),
+  QVERIFY2(!sensor->getSupportedMeasurementConfigs().empty(),
            "LeicaTachymeter must publish its own measurement configs");
 }
 

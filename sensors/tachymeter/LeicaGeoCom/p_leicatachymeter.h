@@ -1,14 +1,13 @@
 #ifndef P_LEICATACHYMETER_H
 #define P_LEICATACHYMETER_H
-
 #include <QDateTime>
 #include <QDebug>
 #include <QObject>
-#include <QStringList>
 #include <QThread>
-#include <QVariantMap>
 #include <QtGlobal>
 #include <QtSerialPort/QSerialPort>
+#include <map>
+#include <vector>
 
 #include "totalstation.h"
 
@@ -36,13 +35,14 @@ class LeicaTachymeter : public TotalStation {
   bool connectSensor() override;
   bool disconnectSensor() override;
 
-  QList<oi::Guarded<Reading> > measure(
+  std::vector<oi::Guarded<Reading> > measure(
       const MeasurementConfig& mConfig) override;
-  QVariantMap readingStream(const ReadingTypes& streamFormat) override;
+  std::map<QString, QVariant> readingStream(
+      const ReadingTypes& streamFormat) override;
 
   bool getConnectionState() override;
   bool getIsReadyForMeasurement() override;
-  QMap<QString, QString> getSensorStatus() override;
+  std::map<QString, QString> getSensorStatus() override;
   bool getIsBusy() override;
 
  protected:
@@ -69,12 +69,13 @@ class LeicaTachymeter : public TotalStation {
  private:
   QPointer<QSerialPort> serial;
 
-  QList<oi::Guarded<Reading> > measurePolar(const MeasurementConfig& mConfig);
-  QList<oi::Guarded<Reading> > measureDistance(
+  std::vector<oi::Guarded<Reading> > measurePolar(
       const MeasurementConfig& mConfig);
-  QList<oi::Guarded<Reading> > measureDirection(
+  std::vector<oi::Guarded<Reading> > measureDistance(
       const MeasurementConfig& mConfig);
-  QList<oi::Guarded<Reading> > measureCartesian(
+  std::vector<oi::Guarded<Reading> > measureDirection(
+      const MeasurementConfig& mConfig);
+  std::vector<oi::Guarded<Reading> > measureCartesian(
       const MeasurementConfig& mConfig);
 
   QSerialPort::BaudRate myBaudRate;
