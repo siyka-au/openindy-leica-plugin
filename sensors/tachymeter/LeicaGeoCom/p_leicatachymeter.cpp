@@ -537,9 +537,9 @@ bool LeicaTachymeter::move(const double& x, const double& y, const double& z) {
  * \param m
  * \return
  */
-QList<QPointer<Reading> > LeicaTachymeter::measure(
+QList<oi::Guarded<Reading> > LeicaTachymeter::measure(
     const MeasurementConfig& mConfig) {
-  QList<QPointer<Reading> > readings;
+  QList<oi::Guarded<Reading> > readings;
 
   // if tracking measurements are active, stop them
   // this->stopTrackingMode();
@@ -597,7 +597,7 @@ QVariantMap LeicaTachymeter::readingStream(const ReadingTypes& streamFormat) {
 
   QVariantMap m;
 
-  QPointer<Reading> reading(nullptr);
+  oi::Guarded<Reading> reading(nullptr);
 
   // set target to specified value
   // Stream works with trk mode, for fast measurements
@@ -683,9 +683,9 @@ bool LeicaTachymeter::getIsBusy() { return false; }
  * \param m
  * \return
  */
-QList<QPointer<Reading> > LeicaTachymeter::measurePolar(
+QList<oi::Guarded<Reading> > LeicaTachymeter::measurePolar(
     const MeasurementConfig& mConfig) {
-  QList<QPointer<Reading> > readings;
+  QList<oi::Guarded<Reading> > readings;
 
   int faceCount = 1;
 
@@ -748,9 +748,9 @@ QList<QPointer<Reading> > LeicaTachymeter::measurePolar(
  * \param m
  * \return
  */
-QList<QPointer<Reading> > LeicaTachymeter::measureDistance(
+QList<oi::Guarded<Reading> > LeicaTachymeter::measureDistance(
     const MeasurementConfig& mConfig) {
-  QList<QPointer<Reading> > readings;
+  QList<oi::Guarded<Reading> > readings;
 
   int faceCount = 1;
 
@@ -776,7 +776,7 @@ QList<QPointer<Reading> > LeicaTachymeter::measureDistance(
               polarElements.at(polarElements.size() - 1).toDouble();
           rDistance.isValid = true;
 
-          QPointer<Reading> reading = new Reading(rDistance);
+          oi::Guarded<Reading> reading = new Reading(rDistance);
           reading->setSensorFace(this->getCurrentFace(zenith));
           reading->setMeasuredAt(std::chrono::system_clock::now());
           readings.append(reading);
@@ -799,9 +799,9 @@ QList<QPointer<Reading> > LeicaTachymeter::measureDistance(
  * \param m
  * \return
  */
-QList<QPointer<Reading> > LeicaTachymeter::measureDirection(
+QList<oi::Guarded<Reading> > LeicaTachymeter::measureDirection(
     const MeasurementConfig& mConfig) {
-  QList<QPointer<Reading> > readings;
+  QList<oi::Guarded<Reading> > readings;
 
   int faceCount = 1;
 
@@ -836,7 +836,7 @@ QList<QPointer<Reading> > LeicaTachymeter::measureDirection(
         }
         rDirection.isValid = true;
 
-        QPointer<Reading> r = new Reading(rDirection);
+        oi::Guarded<Reading> r = new Reading(rDirection);
         r->setSensorFace(this->getCurrentFace(rDirection.zenith));
         r->setMeasuredAt(std::chrono::system_clock::now());
         readings.append(r);
@@ -858,9 +858,9 @@ QList<QPointer<Reading> > LeicaTachymeter::measureDirection(
  * \param m
  * \return
  */
-QList<QPointer<Reading> > LeicaTachymeter::measureCartesian(
+QList<oi::Guarded<Reading> > LeicaTachymeter::measureCartesian(
     const MeasurementConfig& mConfig) {
-  QList<QPointer<Reading> > readings = this->measurePolar(mConfig);
+  QList<oi::Guarded<Reading> > readings = this->measurePolar(mConfig);
 
   // this->stopTrackingAfterMeasure();
   // restart watchwindow if it was open before measurement
@@ -1166,12 +1166,12 @@ measurement");
  * \param receive
  * \return
  */
-/*QPointer<Reading> LeicaTachymeter::getQuickMeasReading(QString receive)
+/*oi::Guarded<Reading> LeicaTachymeter::getQuickMeasReading(QString receive)
 {
     QStringList rc = receive.split(":"); //split at ":" to get RC
     QStringList elements = rc.at(1).split(","); // split at "," to get values
 
-    QPointer<Reading> r;
+    oi::Guarded<Reading> r;
 
     //if return code is not ok, then exit function
     if(elements.at(0).compare("0") != 0){
@@ -1240,8 +1240,8 @@ this->sensorConfiguration.getStringParameter().value("sense of rotation");
  * Performs a fast measurement for watch window
  * \return
  */
-QPointer<Reading> LeicaTachymeter::getStreamValues() {
-  QPointer<Reading> reading(nullptr);
+oi::Guarded<Reading> LeicaTachymeter::getStreamValues() {
+  oi::Guarded<Reading> reading(nullptr);
 
   if (this->sensorConfiguration.getStringParameter().contains("reflector")) {
     QString value =

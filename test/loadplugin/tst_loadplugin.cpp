@@ -41,10 +41,10 @@ void LoadPluginTest::testLoadPlugin() {
   QVERIFY2(oiPlugin->createFunctions().isEmpty(),
            "expected no functions from a sensor-only plugin");
 
-  QList<QPointer<Sensor> > sensors = oiPlugin->createSensors();
+  QList<oi::Guarded<Sensor> > sensors = oiPlugin->createSensors();
   QCOMPARE(sensors.size(), 1);
 
-  QPointer<Sensor> sensor = oiPlugin->createSensor("LeicaTachymeter");
+  oi::Guarded<Sensor> sensor = oiPlugin->createSensor("LeicaTachymeter");
   QVERIFY2(!sensor.isNull(), "createSensor(\"LeicaTachymeter\") returned null");
 
   sensor->init();

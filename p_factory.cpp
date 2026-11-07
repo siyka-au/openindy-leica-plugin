@@ -4,69 +4,61 @@ using namespace oi;
 
 LeicaPlugin::LeicaPlugin(QObject* parent) : QObject(parent) {}
 
-QList<QPointer<Sensor> > LeicaPlugin::createSensors() {
-  QList<QPointer<Sensor> > resultSet;
+QList<oi::Guarded<Sensor> > LeicaPlugin::createSensors() {
+  QList<oi::Guarded<Sensor> > resultSet;
   resultSet.append(new LeicaTachymeter());
   return resultSet;
 }
 
-QList<QPointer<Function> > LeicaPlugin::createFunctions() {
-  return QList<QPointer<Function> >();
+QList<oi::Guarded<Function> > LeicaPlugin::createFunctions() {
+  return QList<oi::Guarded<Function> >();
 }
 
-QList<QPointer<BundleAdjustment> > LeicaPlugin::createBundleAdjustments() {
-  return QList<QPointer<BundleAdjustment> >();
+QList<oi::Guarded<BundleAdjustment> > LeicaPlugin::createBundleAdjustments() {
+  return QList<oi::Guarded<BundleAdjustment> >();
 }
 
-QList<QPointer<SimulationModel> > LeicaPlugin::createSimulations() {
-  return QList<QPointer<SimulationModel> >();
+QList<oi::Guarded<SimulationModel> > LeicaPlugin::createSimulations() {
+  return QList<oi::Guarded<SimulationModel> >();
 }
 
-QList<QPointer<Tool> > LeicaPlugin::createTools() {
-  return QList<QPointer<Tool> >();
-}
-
-QList<QPointer<ExchangeSimpleAscii> >
+QList<oi::Guarded<ExchangeSimpleAscii> >
 LeicaPlugin::createSimpleAsciiExchanges() {
-  return QList<QPointer<ExchangeSimpleAscii> >();
+  return QList<oi::Guarded<ExchangeSimpleAscii> >();
 }
 
-QList<QPointer<ExchangeDefinedFormat> >
+QList<oi::Guarded<ExchangeDefinedFormat> >
 LeicaPlugin::createDefinedFormatExchanges() {
-  return QList<QPointer<ExchangeDefinedFormat> >();
+  return QList<oi::Guarded<ExchangeDefinedFormat> >();
 }
 
-QPointer<Sensor> LeicaPlugin::createSensor(const QString& name) {
+oi::Guarded<Sensor> LeicaPlugin::createSensor(const QString& name) {
   if (name.compare("LeicaTachymeter") == 0) {
     return new LeicaTachymeter();
   }
-  return QPointer<Sensor>(nullptr);
+  return oi::Guarded<Sensor>(nullptr);
 }
 
-QPointer<Function> LeicaPlugin::createFunction(const QString& /*name*/) {
-  return QPointer<Function>(nullptr);
+oi::Guarded<Function> LeicaPlugin::createFunction(const QString& /*name*/) {
+  return oi::Guarded<Function>(nullptr);
 }
 
-QPointer<BundleAdjustment> LeicaPlugin::createBundleAdjustment(
+oi::Guarded<BundleAdjustment> LeicaPlugin::createBundleAdjustment(
     const QString& /*name*/) {
-  return QPointer<BundleAdjustment>(nullptr);
+  return oi::Guarded<BundleAdjustment>(nullptr);
 }
 
-QPointer<SimulationModel> LeicaPlugin::createSimulation(
+oi::Guarded<SimulationModel> LeicaPlugin::createSimulation(
     const QString& /*name*/) {
-  return QPointer<SimulationModel>(nullptr);
+  return oi::Guarded<SimulationModel>(nullptr);
 }
 
-QPointer<Tool> LeicaPlugin::createTool(const QString& /*name*/) {
-  return QPointer<Tool>(nullptr);
-}
-
-QPointer<ExchangeSimpleAscii> LeicaPlugin::createSimpleAsciiExchange(
+oi::Guarded<ExchangeSimpleAscii> LeicaPlugin::createSimpleAsciiExchange(
     const QString& /*name*/) {
-  return QPointer<ExchangeSimpleAscii>(nullptr);
+  return oi::Guarded<ExchangeSimpleAscii>(nullptr);
 }
 
-QPointer<ExchangeDefinedFormat> LeicaPlugin::createDefinedFormatExchange(
+oi::Guarded<ExchangeDefinedFormat> LeicaPlugin::createDefinedFormatExchange(
     const QString& /*name*/) {
-  return QPointer<ExchangeDefinedFormat>(nullptr);
+  return oi::Guarded<ExchangeDefinedFormat>(nullptr);
 }

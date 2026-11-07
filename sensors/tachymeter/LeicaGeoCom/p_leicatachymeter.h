@@ -18,8 +18,6 @@ using namespace oi;
  * \brief The LeicaTachymeter class
  */
 class LeicaTachymeter : public TotalStation {
-  Q_OBJECT
-
  public:
   // ############################
   // sensor initialization method
@@ -38,7 +36,8 @@ class LeicaTachymeter : public TotalStation {
   bool connectSensor() override;
   bool disconnectSensor() override;
 
-  QList<QPointer<Reading> > measure(const MeasurementConfig& mConfig) override;
+  QList<oi::Guarded<Reading> > measure(
+      const MeasurementConfig& mConfig) override;
   QVariantMap readingStream(const ReadingTypes& streamFormat) override;
 
   bool getConnectionState() override;
@@ -70,10 +69,13 @@ class LeicaTachymeter : public TotalStation {
  private:
   QPointer<QSerialPort> serial;
 
-  QList<QPointer<Reading> > measurePolar(const MeasurementConfig& mConfig);
-  QList<QPointer<Reading> > measureDistance(const MeasurementConfig& mConfig);
-  QList<QPointer<Reading> > measureDirection(const MeasurementConfig& mConfig);
-  QList<QPointer<Reading> > measureCartesian(const MeasurementConfig& mConfig);
+  QList<oi::Guarded<Reading> > measurePolar(const MeasurementConfig& mConfig);
+  QList<oi::Guarded<Reading> > measureDistance(
+      const MeasurementConfig& mConfig);
+  QList<oi::Guarded<Reading> > measureDirection(
+      const MeasurementConfig& mConfig);
+  QList<oi::Guarded<Reading> > measureCartesian(
+      const MeasurementConfig& mConfig);
 
   QSerialPort::BaudRate myBaudRate;
   QSerialPort::DataBits myDataBits;
@@ -105,14 +107,14 @@ class LeicaTachymeter : public TotalStation {
   // void stopWatchWindowForMeasurement();
   // void restartWatchWindowAfterMeasurement();
 
-  // QPointer<Reading> getQuickMeasReading(QString receive);
+  // oi::Guarded<Reading> getQuickMeasReading(QString receive);
 
   // void activateLaserPointer();
   // void deactivateLaserPointer();
 
   // void stopTrackingMode();
 
-  QPointer<Reading> getStreamValues();
+  oi::Guarded<Reading> getStreamValues();
 };
 
 #endif  // P_LEICATACHYMETER_H

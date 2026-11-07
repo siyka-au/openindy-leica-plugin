@@ -28,21 +28,20 @@ class LeicaPlugin : public QObject, Plugin {
  public:
   explicit LeicaPlugin(QObject* parent = 0);
 
-  QList<QPointer<Sensor> > createSensors();
-  QList<QPointer<Function> > createFunctions();
-  QList<QPointer<BundleAdjustment> > createBundleAdjustments();
-  QList<QPointer<SimulationModel> > createSimulations();
-  QList<QPointer<Tool> > createTools();
-  QList<QPointer<ExchangeSimpleAscii> > createSimpleAsciiExchanges();
-  QList<QPointer<ExchangeDefinedFormat> > createDefinedFormatExchanges();
+  QList<oi::Guarded<Sensor> > createSensors();
+  QList<oi::Guarded<Function> > createFunctions();
+  QList<oi::Guarded<BundleAdjustment> > createBundleAdjustments();
+  QList<oi::Guarded<SimulationModel> > createSimulations();
+  QList<oi::Guarded<ExchangeSimpleAscii> > createSimpleAsciiExchanges();
+  QList<oi::Guarded<ExchangeDefinedFormat> > createDefinedFormatExchanges();
 
-  QPointer<Sensor> createSensor(const QString& name);
-  QPointer<Function> createFunction(const QString& name);
-  QPointer<BundleAdjustment> createBundleAdjustment(const QString& name);
-  QPointer<SimulationModel> createSimulation(const QString& name);
-  QPointer<Tool> createTool(const QString& name);
-  QPointer<ExchangeSimpleAscii> createSimpleAsciiExchange(const QString& name);
-  QPointer<ExchangeDefinedFormat> createDefinedFormatExchange(
+  oi::Guarded<Sensor> createSensor(const QString& name);
+  oi::Guarded<Function> createFunction(const QString& name);
+  oi::Guarded<BundleAdjustment> createBundleAdjustment(const QString& name);
+  oi::Guarded<SimulationModel> createSimulation(const QString& name);
+  oi::Guarded<ExchangeSimpleAscii> createSimpleAsciiExchange(
+      const QString& name);
+  oi::Guarded<ExchangeDefinedFormat> createDefinedFormatExchange(
       const QString& name);
 };
 
