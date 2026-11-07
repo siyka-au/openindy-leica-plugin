@@ -716,10 +716,11 @@ std::vector<oi::Guarded<Reading> > LeicaTachymeter::measurePolar(
           ReadingPolar rPolar;
 
           rPolar.azimuth =
-              polarElements.at(polarElements.size() - 3).toDouble();
-          rPolar.zenith = polarElements.at(polarElements.size() - 2).toDouble();
+              polarElements.value(polarElements.size() - 3).toDouble();
+          rPolar.zenith =
+              polarElements.value(polarElements.size() - 2).toDouble();
           rPolar.distance =
-              polarElements.at(polarElements.size() - 1).toDouble();
+              polarElements.value(polarElements.size() - 1).toDouble();
 
           // correct the values depending on specified sense of rotation
           if (this->sensorConfiguration.getStringParameter().contains(
@@ -777,11 +778,12 @@ std::vector<oi::Guarded<Reading> > LeicaTachymeter::measureDistance(
 
           QStringList polarElements = measureData.split(",");
 
-          double zenith = polarElements.at(polarElements.size() - 2).toDouble();
+          double zenith =
+              polarElements.value(polarElements.size() - 2).toDouble();
 
           ReadingDistance rDistance;
           rDistance.distance =
-              polarElements.at(polarElements.size() - 1).toDouble();
+              polarElements.value(polarElements.size() - 1).toDouble();
           rDistance.isValid = true;
 
           oi::Guarded<Reading> reading = new Reading(rDistance);
@@ -829,9 +831,9 @@ std::vector<oi::Guarded<Reading> > LeicaTachymeter::measureDirection(
         ReadingDirection rDirection;
 
         rDirection.azimuth =
-            polarElements.at(polarElements.size() - 2).toDouble();
+            polarElements.value(polarElements.size() - 2).toDouble();
         rDirection.zenith =
-            polarElements.at(polarElements.size() - 1).toDouble();
+            polarElements.value(polarElements.size() - 1).toDouble();
 
         // correct the values depending on specified sense of rotation
         if (this->sensorConfiguration.getStringParameter().contains(
@@ -1284,10 +1286,11 @@ oi::Guarded<Reading> LeicaTachymeter::getStreamValues() {
           // create and fill polar reading
           ReadingPolar rPolar;
           rPolar.azimuth =
-              polarElements.at(polarElements.size() - 3).toDouble();
-          rPolar.zenith = polarElements.at(polarElements.size() - 2).toDouble();
+              polarElements.value(polarElements.size() - 3).toDouble();
+          rPolar.zenith =
+              polarElements.value(polarElements.size() - 2).toDouble();
           rPolar.distance =
-              polarElements.at(polarElements.size() - 1).toDouble();
+              polarElements.value(polarElements.size() - 1).toDouble();
           rPolar.isValid = true;
 
           // adjust azimuth according to the sense of rotation
