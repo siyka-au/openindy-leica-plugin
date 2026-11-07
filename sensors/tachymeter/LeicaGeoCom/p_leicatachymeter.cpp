@@ -207,16 +207,16 @@ bool LeicaTachymeter::connectSensor() {
 
   // open com port and set parameters
   if (this->serial->open(QIODevice::ReadWrite)) {
-    if (this->serial->setBaudRate(
-            this->sensorConfiguration.getConnectionConfig().baudRate) &&
-        this->serial->setDataBits(
-            this->sensorConfiguration.getConnectionConfig().dataBits) &&
-        this->serial->setParity(
-            this->sensorConfiguration.getConnectionConfig().parity) &&
-        this->serial->setFlowControl(
-            this->sensorConfiguration.getConnectionConfig().flowControl) &&
-        this->serial->setStopBits(
-            this->sensorConfiguration.getConnectionConfig().stopBits)) {
+    if (this->serial->setBaudRate(static_cast<QSerialPort::BaudRate>(
+            this->sensorConfiguration.getConnectionConfig().baudRate)) &&
+        this->serial->setDataBits(static_cast<QSerialPort::DataBits>(
+            this->sensorConfiguration.getConnectionConfig().dataBits)) &&
+        this->serial->setParity(static_cast<QSerialPort::Parity>(
+            this->sensorConfiguration.getConnectionConfig().parity)) &&
+        this->serial->setFlowControl(static_cast<QSerialPort::FlowControl>(
+            this->sensorConfiguration.getConnectionConfig().flowControl)) &&
+        this->serial->setStopBits(static_cast<QSerialPort::StopBits>(
+            this->sensorConfiguration.getConnectionConfig().stopBits))) {
       return true;
     }
   }
