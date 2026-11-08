@@ -79,12 +79,6 @@ class LeicaTachymeter : public TotalStation {
   std::vector<std::unique_ptr<Reading>> measureCartesian(
       const MeasurementConfig& mConfig);
 
-  QSerialPort::BaudRate myBaudRate;
-  QSerialPort::DataBits myDataBits;
-  QSerialPort::Parity myParity;
-  QSerialPort::StopBits myStopBits;
-  QSerialPort::FlowControl myFlowControl;
-
   QString receive();
   // void getError(QSerialPort::SerialPortError);
   bool executeEDM();

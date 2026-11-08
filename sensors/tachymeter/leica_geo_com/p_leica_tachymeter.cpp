@@ -5,6 +5,18 @@
 
 #include "containers.h"
 
+namespace {
+// Default accuracy of the Leica tachymeter (angles in rad, lengths in m).
+constexpr double kSigmaAngle = 0.000001570;
+constexpr double kSigmaDirection = 0.00001570;
+constexpr double kSigmaLength = 0.001;
+constexpr double kSigmaTemperature = 0.5;
+// Serial communication timeouts in ms.
+constexpr int kPollDelayMs = 100;
+constexpr int kReadTimeoutMs = 100;
+constexpr int kCommandTimeoutMs = 10000;
+}  // namespace
+
 /*!
  * \brief LeicaTachymeter::init
  */
@@ -108,16 +120,16 @@ void LeicaTachymeter::init() {
       "laserPointer");  // turn on/off laser pointer
 
   // set default accuracy
-  this->defaultAccuracy.sigmaAzimuth = 0.000001570;
-  this->defaultAccuracy.sigmaZenith = 0.000001570;
-  this->defaultAccuracy.sigmaDistance = 0.001;
-  this->defaultAccuracy.sigmaXyz.setAt(0, 0.001);
-  this->defaultAccuracy.sigmaXyz.setAt(1, 0.001);
-  this->defaultAccuracy.sigmaXyz.setAt(2, 0.001);
-  this->defaultAccuracy.sigmaTemp = 0.5;
-  this->defaultAccuracy.sigmaI = 0.00001570;
-  this->defaultAccuracy.sigmaJ = 0.00001570;
-  this->defaultAccuracy.sigmaK = 0.00001570;
+  this->defaultAccuracy.sigmaAzimuth = kSigmaAngle;
+  this->defaultAccuracy.sigmaZenith = kSigmaAngle;
+  this->defaultAccuracy.sigmaDistance = kSigmaLength;
+  this->defaultAccuracy.sigmaXyz.setAt(0, kSigmaLength);
+  this->defaultAccuracy.sigmaXyz.setAt(1, kSigmaLength);
+  this->defaultAccuracy.sigmaXyz.setAt(2, kSigmaLength);
+  this->defaultAccuracy.sigmaTemp = kSigmaTemperature;
+  this->defaultAccuracy.sigmaI = kSigmaDirection;
+  this->defaultAccuracy.sigmaJ = kSigmaDirection;
+  this->defaultAccuracy.sigmaK = kSigmaDirection;
 
   // general tachy inits
 
@@ -195,7 +207,10 @@ bool LeicaTachymeter::abortAction() { return false; }
 bool LeicaTachymeter::connectSensor() {
   // init serial port
   if (this->serial.isNull()) {
-    this->serial = new QSerialPort();
+    // QObject without parent: the QPointer observes it and disconnectSensor()
+    // hands it to deleteLater()
+    this->serial =
+        new QSerialPort();  // NOLINT(cppcoreguidelines-owning-memory)
   }
 
   // set fineAdjusted to false
@@ -609,7 +624,7 @@ oi::ValueMap LeicaTachymeter::readingStream(const ReadingTypes& streamFormat) {
 
     reading = this->getStreamValues();
 
-    QThread::msleep(100);
+    QThread::msleep(kPollDelayMs);
 
     if (!reading) {
       return m;
@@ -875,7 +890,7 @@ std::vector<std::unique_ptr<Reading>> LeicaTachymeter::measureCartesian(
 QString LeicaTachymeter::receive() {
   // receive response
   QByteArray responseData = this->serial->readAll();
-  while (this->serial->waitForReadyRead(100))
+  while (this->serial->waitForReadyRead(kReadTimeoutMs))
     responseData += this->serial->readAll();
 
   // parse and return response
@@ -902,8 +917,8 @@ bool LeicaTachymeter::executeCommand(QString command) {
 
   this->serial->write(data, data.length());
 
-  if (this->serial->waitForBytesWritten(10000)) {
-    if (this->serial->waitForReadyRead(10000)) {
+  if (this->serial->waitForBytesWritten(kCommandTimeoutMs)) {
+    if (this->serial->waitForReadyRead(kCommandTimeoutMs)) {
       return true;
     }
   }

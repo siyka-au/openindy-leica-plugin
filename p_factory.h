@@ -23,24 +23,26 @@ class LeicaPlugin : public Plugin {
  public:
   LeicaPlugin();
 
-  std::vector<std::unique_ptr<Sensor>> createSensors();
-  std::vector<std::unique_ptr<Function>> createFunctions();
-  std::vector<std::unique_ptr<BundleAdjustment>> createBundleAdjustments();
-  std::vector<std::unique_ptr<SimulationModel>> createSimulations();
-  std::vector<std::unique_ptr<ExchangeSimpleAscii>>
-  createSimpleAsciiExchanges();
+  std::vector<std::unique_ptr<Sensor>> createSensors() override;
+  std::vector<std::unique_ptr<Function>> createFunctions() override;
+  std::vector<std::unique_ptr<BundleAdjustment>> createBundleAdjustments()
+      override;
+  std::vector<std::unique_ptr<SimulationModel>> createSimulations() override;
+  std::vector<std::unique_ptr<ExchangeSimpleAscii>> createSimpleAsciiExchanges()
+      override;
   std::vector<std::unique_ptr<ExchangeDefinedFormat>>
-  createDefinedFormatExchanges();
+  createDefinedFormatExchanges() override;
 
-  std::unique_ptr<Sensor> createSensor(const std::string& name);
-  std::unique_ptr<Function> createFunction(const std::string& name);
+  std::unique_ptr<Sensor> createSensor(const std::string& name) override;
+  std::unique_ptr<Function> createFunction(const std::string& name) override;
   std::unique_ptr<BundleAdjustment> createBundleAdjustment(
-      const std::string& name);
-  std::unique_ptr<SimulationModel> createSimulation(const std::string& name);
+      const std::string& name) override;
+  std::unique_ptr<SimulationModel> createSimulation(
+      const std::string& name) override;
   std::unique_ptr<ExchangeSimpleAscii> createSimpleAsciiExchange(
-      const std::string& name);
+      const std::string& name) override;
   std::unique_ptr<ExchangeDefinedFormat> createDefinedFormatExchange(
-      const std::string& name);
+      const std::string& name) override;
 };
 
 #endif  // OI_LEICA_PLUGIN_P_FACTORY_H_

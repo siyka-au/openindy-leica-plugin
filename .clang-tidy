@@ -1,6 +1,5 @@
----
-# C++ Core Guidelines are the style rule set. Checks disabled below are
-# deliberate, with the reason given.
+# C++ Core Guidelines are the style rule set; every check of the set is enabled
+# (plus the modernize/misc checks below). Nothing is disabled.
 Checks: >
   -*,
   cppcoreguidelines-*,
@@ -12,20 +11,13 @@ Checks: >
   modernize-make-unique,
   modernize-make-shared,
   misc-throw-by-value-catch-by-reference,
-  -cppcoreguidelines-owning-memory,
-  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
-  -cppcoreguidelines-avoid-magic-numbers,
-  -cppcoreguidelines-macro-usage,
-  -cppcoreguidelines-macro-to-enum,
-  -modernize-macro-to-enum,
-  -cppcoreguidelines-non-private-member-variables-in-classes,
-  -cppcoreguidelines-avoid-non-const-global-variables
-# owning-memory: disabled for now. The plugin interface hands out raw owning pointers
-#   (factories, Function/Sensor creation); enable once core's unique_ptr migration lands.
-# macro-to-enum: OI_PLUGIN_ABI_VERSION must stay a #define (CMake parses it out of plugin_abi.h).
-# macro-usage: Q_OBJECT (plugin tests, Qt used internally) and OI_DECLARE_PLUGIN* are unavoidable.
-# magic-numbers / non-private-members / non-const-globals: too noisy for the
-#   legacy code; revisit once the rest is clean.
+  modernize-macro-to-enum
 WarningsAsErrors: ''
-HeaderFilterRegex: '(include|src|controller|models|ui|functions|sensors|exchange|cf|tools|simulations)/.*'
+# Only this repo's own headers are reported: anchored on the checkout directory name
+# (CI checks repos out as siblings under their repo name), so third-party headers
+# (Conan ".../include/...") and sibling repos are never linted from here.
+HeaderFilterRegex: '.*/openindy-leica-plugin/(sensors/.*|test/.*|p_factory\.h)'
+# FormatStyle: file -- format the code produced by clang-tidy's automatic fix-its (--fix)
+# with the .clang-format found by walking up from the source file; it does not change
+# what is reported.
 FormatStyle: file
