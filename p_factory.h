@@ -4,10 +4,10 @@
 #include <string>
 #include <vector>
 
-#include "p_leicatachymeter.h"
+#include "p_leica_tachymeter.h"
 #include "plugin.h"
 #include "sensor.h"
-#include "totalstation.h"
+#include "total_station.h"
 
 using namespace oi;
 

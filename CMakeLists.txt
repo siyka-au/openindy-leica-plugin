@@ -29,13 +29,13 @@ else()
 endif()
 FetchContent_MakeAvailable(OpenIndyCore)
 
-# OpenIndyCore publishes this from include/plugin/pluginabi.h. A core too old
+# OpenIndyCore publishes this from include/plugin/plugin_abi.h. A core too old
 # to define it cannot be checked for ABI compatibility at all, so fail loudly
 # here rather than shipping a plugin whose metadata claims nothing.
 if(NOT DEFINED OI_PLUGIN_ABI_VERSION OR OI_PLUGIN_ABI_VERSION STREQUAL "")
     message(FATAL_ERROR
         "OpenIndyCore did not publish OI_PLUGIN_ABI_VERSION. "
-        "Update openindy-core to a revision that declares it in include/plugin/pluginabi.h.")
+        "Update openindy-core to a revision that declares it in include/plugin/plugin_abi.h.")
 endif()
 
 set(OI_APP_LOCAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../openindy" CACHE PATH
@@ -43,7 +43,7 @@ set(OI_APP_LOCAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../openindy" CACHE PATH
 
 # --- plugin metadata ---
 # mirrors the compiler/OS strings OiMetaData::getCompiler()/getOperatingSys()
-# (openindy/controller/oimetadata.cpp) report, since PluginCopier::checkPluginMetaData
+# (openindy/controller/oi_meta_data.cpp) report, since PluginCopier::checkPluginMetaData
 # compares them literally against this file's contents at import time
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -70,28 +70,28 @@ set(COMPILER "${OI_PLUGIN_COMPILER}")
 set(OS "${OI_PLUGIN_OS}")
 
 configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/metaInfo.json.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/metaInfo.json"
+    "${CMAKE_CURRENT_SOURCE_DIR}/meta_info.json.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/meta_info.json"
     @ONLY
 )
 
 # The metadata is compiled into the library as a string and handed out by the
 # oi_plugin_metadata_json() entry point (OI_DECLARE_PLUGIN_WITH_METADATA), so
 # the host can read it once the library is loaded.
-file(READ "${CMAKE_CURRENT_BINARY_DIR}/metaInfo.json" OI_PLUGIN_METADATA_JSON)
+file(READ "${CMAKE_CURRENT_BINARY_DIR}/meta_info.json" OI_PLUGIN_METADATA_JSON)
 configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/metaInfo.h.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/generated/metaInfo.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/meta_info.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/meta_info.h"
     @ONLY
 )
 
 # --- plugin library ---
 
 add_library(OpenIndyLeicaPlugin SHARED
-    sensors/tachymeter/LeicaGeoCom/p_leicatachymeter.cpp
+    sensors/tachymeter/leica_geo_com/p_leica_tachymeter.cpp
     p_factory.cpp
 
-    sensors/tachymeter/LeicaGeoCom/p_leicatachymeter.h
+    sensors/tachymeter/leica_geo_com/p_leica_tachymeter.h
     p_factory.h
 )
 
@@ -108,7 +108,7 @@ target_include_directories(OpenIndyLeicaPlugin
     PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}/generated
         ${CMAKE_CURRENT_SOURCE_DIR}
-        sensors/tachymeter/LeicaGeoCom
+        sensors/tachymeter/leica_geo_com
 )
 
 target_link_libraries(OpenIndyLeicaPlugin
@@ -138,7 +138,7 @@ enable_testing()
 
 find_package(Qt6 REQUIRED COMPONENTS Test)
 
-add_executable(tst_loadplugin test/loadplugin/tst_loadplugin.cpp)
+add_executable(tst_loadplugin test/load_plugin/tst_load_plugin.cpp)
 target_link_libraries(tst_loadplugin PRIVATE Qt6::Test OpenIndyCore)
 target_compile_definitions(tst_loadplugin PRIVATE
     PLUGIN_PATH="$<TARGET_FILE:OpenIndyLeicaPlugin>")

@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 
-#include "totalstation.h"
+#include "total_station.h"
 
 using namespace oi;
 

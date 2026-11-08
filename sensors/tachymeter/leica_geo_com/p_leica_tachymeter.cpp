@@ -1,4 +1,4 @@
-#include "p_leicatachymeter.h"
+#include "p_leica_tachymeter.h"
 
 #include <map>
 #include <vector>

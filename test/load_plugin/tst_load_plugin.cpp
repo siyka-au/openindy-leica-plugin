@@ -4,8 +4,8 @@
 #include <vector>
 
 #include "plugin.h"
-#include "pluginloader.h"
-#include "sensortype.h"
+#include "plugin_loader.h"
+#include "sensor_type.h"
 
 using namespace oi;
 
@@ -15,7 +15,7 @@ using namespace oi;
  * oi::PluginLoader, the same mechanism the app uses at startup, rather
  * than just linking against the driver class directly. A driver that only
  * compiles but never actually resolves as a plugin (missing
- * OI_DECLARE_PLUGIN entry points, ABI mismatch, metaInfo.json mismatch)
+ * OI_DECLARE_PLUGIN entry points, ABI mismatch, meta_info.json mismatch)
  * would pass every other test in this repo and still fail to load in the
  * real app.
  */
@@ -66,4 +66,4 @@ void LoadPluginTest::testLoadPlugin() {
 
 QTEST_APPLESS_MAIN(LoadPluginTest)
 
-#include "tst_loadplugin.moc"
+#include "tst_load_plugin.moc"
