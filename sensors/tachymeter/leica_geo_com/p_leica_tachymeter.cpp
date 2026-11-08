@@ -449,7 +449,7 @@ bool LeicaTachymeter::move(const double& azimuth, const double& zenith,
       double ze = zenith;
 
       if (az <= 0.0) {
-        az = 2 * PI + az;
+        az = 2 * kPi + az;
       }
 
       // correct the values depending on specified sense of rotation
@@ -459,7 +459,7 @@ bool LeicaTachymeter::move(const double& azimuth, const double& zenith,
             oi::value(this->sensorConfiguration.getStringParameter(),
                       std::string("sense of rotation")));
         if (sense.compare("mathematical") == 0) {
-          az = 2 * PI - az;
+          az = 2 * kPi - az;
         }
       }
 
@@ -501,7 +501,7 @@ bool LeicaTachymeter::move(const double& x, const double& y, const double& z) {
   ReadingPolar rPolar;
   rPolar.azimuth = p.getAt(0);
   if (rPolar.azimuth <= 0.0) {
-    rPolar.azimuth = 2 * PI + rPolar.azimuth;
+    rPolar.azimuth = 2 * kPi + rPolar.azimuth;
   }
   rPolar.zenith = p.getAt(1);
   rPolar.distance = p.getAt(2);
@@ -527,7 +527,7 @@ bool LeicaTachymeter::move(const double& x, const double& y, const double& z) {
           oi::value(this->sensorConfiguration.getStringParameter(),
                     std::string("sense of rotation")));
       if (sense.compare("mathematical") == 0) {
-        rPolar.azimuth = 2 * PI - rPolar.azimuth;
+        rPolar.azimuth = 2 * kPi - rPolar.azimuth;
       }
     }
 
@@ -733,7 +733,7 @@ std::vector<std::unique_ptr<Reading>> LeicaTachymeter::measurePolar(
                 oi::value(this->sensorConfiguration.getStringParameter(),
                           std::string("sense of rotation")));
             if (sense.compare("mathematical") == 0) {
-              rPolar.azimuth = 2 * PI - rPolar.azimuth;
+              rPolar.azimuth = 2 * kPi - rPolar.azimuth;
             }
           }
           rPolar.isValid = true;
@@ -846,7 +846,7 @@ std::vector<std::unique_ptr<Reading>> LeicaTachymeter::measureDirection(
               oi::value(this->sensorConfiguration.getStringParameter(),
                         std::string("sense of rotation")));
           if (sense.compare("mathematical") == 0) {
-            rDirection.azimuth = 2 * PI - rDirection.azimuth;
+            rDirection.azimuth = 2 * kPi - rDirection.azimuth;
           }
         }
         rDirection.isValid = true;
@@ -956,7 +956,7 @@ bool LeicaTachymeter::checkCommandRC(QString command) {
  * \return
  */
 SensorFaces LeicaTachymeter::getCurrentFace(double zenith) {
-  if ((zenith >= 0.0) && (zenith < PI)) {
+  if ((zenith >= 0.0) && (zenith < kPi)) {
     return SensorFaces::eFrontSide;
   } else {
     return SensorFaces::eBackSide;
@@ -1212,7 +1212,7 @@ measurement");
 rotation")){ QString sense =
 this->sensorConfiguration.getStringParameter().value("sense of rotation");
         if(sense.compare("mathematical") == 0){
-            rPolar.azimuth = 2 * PI - rPolar.azimuth;
+            rPolar.azimuth = 2 * kPi - rPolar.azimuth;
         }
     }
 
@@ -1304,7 +1304,7 @@ std::unique_ptr<Reading> LeicaTachymeter::getStreamValues() {
                 oi::value(this->sensorConfiguration.getStringParameter(),
                           std::string("sense of rotation")));
             if (sense.compare("mathematical") == 0) {
-              rPolar.azimuth = 2 * PI - rPolar.azimuth;
+              rPolar.azimuth = 2 * kPi - rPolar.azimuth;
             }
           }
 
