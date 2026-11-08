@@ -1,5 +1,5 @@
-#ifndef P_LEICATACHYMETER_H
-#define P_LEICATACHYMETER_H
+#ifndef OI_LEICA_PLUGIN_SENSORS_TACHYMETER_LEICA_GEO_COM_P_LEICA_TACHYMETER_H_
+#define OI_LEICA_PLUGIN_SENSORS_TACHYMETER_LEICA_GEO_COM_P_LEICA_TACHYMETER_H_
 #include <QDateTime>
 #include <QDebug>
 #include <QObject>
@@ -119,4 +119,4 @@ class LeicaTachymeter : public TotalStation {
   std::unique_ptr<Reading> getStreamValues();
 };
 
-#endif  // P_LEICATACHYMETER_H
+#endif  // OI_LEICA_PLUGIN_SENSORS_TACHYMETER_LEICA_GEO_COM_P_LEICA_TACHYMETER_H_

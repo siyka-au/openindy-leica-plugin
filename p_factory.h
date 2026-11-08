@@ -1,5 +1,5 @@
-#ifndef P_FACTORY_H
-#define P_FACTORY_H
+#ifndef OI_LEICA_PLUGIN_P_FACTORY_H_
+#define OI_LEICA_PLUGIN_P_FACTORY_H_
 #include <memory>
 #include <string>
 #include <vector>
@@ -43,4 +43,4 @@ class LeicaPlugin : public Plugin {
       const std::string& name);
 };
 
-#endif  // P_FACTORY_H
+#endif  // OI_LEICA_PLUGIN_P_FACTORY_H_
